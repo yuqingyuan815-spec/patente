@@ -483,7 +483,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 // ═══════════════════════════════════════════════
 const CDN='https://cdn.jsdelivr.net/gh/Ed0ardo/QuizPatenteB@main';
 const IMGB=CDN+'/img_sign/';
-const JURL=CDN+'/quizPatenteB2023.json';
+const JURL='./quizPatenteB2023.json';
 
 let AQ=[],TR={},WR=new Set(),SN=new Set();
 let STATS={answered:0,correct:0,exams:0,passed:0};
@@ -515,7 +515,7 @@ async function boot(){
   if(cached){try{msg.textContent='从缓存加载题库…';bar.style.width='60%';AQ=JSON.parse(cached);bar.style.width='100%';pct.textContent=AQ.length+'题';await slp(300);initApp();return;}catch(e){}}
   try{
     msg.textContent='下载官方题库 (~2MB)…';
-    const res=await fetch(JURL);if(!res.ok)throw 0;
+    const res=await fetch(const JURL='./quizPatenteB2023.json';);if(!res.ok)throw 0;
     const tot=parseInt(res.headers.get('content-length')||'0');
     const rdr=res.body.getReader();let cks=[],rcv=0;
     while(1){const{done,value}=await rdr.read();if(done)break;cks.push(value);rcv+=value.length;if(tot>0){const p=Math.round(rcv/tot*88);bar.style.width=p+'%';pct.textContent=p+'%';}}
