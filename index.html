@@ -521,7 +521,7 @@ async function boot(){
     while(1){const{done,value}=await rdr.read();if(done)break;cks.push(value);rcv+=value.length;if(tot>0){const p=Math.round(rcv/tot*88);bar.style.width=p+'%';pct.textContent=p+'%';}}
     bar.style.width='96%';msg.textContent='解析中…';
     const txt=new TextDecoder().decode(conc(cks));
-    AQ=JSON.parse(txt);try{localStorage.setItem('pq1',txt);}catch(e){}
+    const raw=JSON.parse(txt);if(Array.isArray(raw)){AQ=raw;}else{AQ=[];let id=1;Object.entries(raw).forEach(([cat,subs])=>{Object.entries(subs).forEach(([sub,qs])=>{qs.forEach(q=>{AQ.push({id:id++,testo:q.q,risposta:q.a,argomento:cat,immagine:q.img?q.img.replace('/img_sign/',''):null});});});});}try{localStorage.setItem('pq1',JSON.stringify(AQ));}catch(e){}
     bar.style.width='100%';pct.textContent=AQ.length+'题';await slp(400);initApp();
   }catch(e){
     msg.textContent='⚠ 使用内置题库…';bar.style.width='100%';AQ=FB;await slp(600);initApp();
