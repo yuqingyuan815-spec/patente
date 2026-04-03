@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4A90E2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="意驾题库">
+<title>Patente B · 意驾题库</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#4A90E2;--blue2:#357ABD;--blue-light:#EBF4FF;
+  --teal:#3DB89A;--teal-bg:#E8F8F4;
+  --orange:#E8973A;--orange-bg:#FDF4E7;
+  --red:#E05C6A;--red-bg:#FDEEF0;
+  --indigo:#5B7FD4;--indigo-bg:#EEF2FB;
+  --dark:#1A1A2E;--text:#1A1A2E;--muted:#8A8FA0;
+  --bg:#F4F6FA;--card:#FFFFFF;--border:#EAECF0;
+  --radius:16px;--shadow:0 2px 12px rgba(0,0,0,.07);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100%;overflow:hidden;font-size:15px}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;max-width:480px;margin:0 auto;background:var(--bg);position:relative}
+
+/* ── Loading ── */
+#ls{position:absolute;inset:0;background:linear-gradient(160deg,#4A90E2,#357ABD);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:100}
+.ls-ic{font-size:3.5rem;margin-bottom:4px}
+.ls-t{font-size:1.3rem;font-weight:700;color:#fff}
+.ls-s{font-size:.8rem;color:rgba(255,255,255,.7);text-align:center;max-width:220px;line-height:1.5}
+.ls-bw{width:200px;height:5px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden}
+.ls-b{height:100%;background:#fff;border-radius:3px;width:0;transition:width .3s}
+.ls-p{color:rgba(255,255,255,.6);font-size:.72rem}
+
+/* ── Scroll ── */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+
+/* ── Bottom nav ── */
+.nav{background:#fff;display:flex;border-top:1px solid var(--border);padding-bottom:var(--safe-bottom);flex-shrink:0;position:relative;z-index:20}
+.nb{flex:1;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:.65rem;color:var(--muted);font-weight:500;transition:color .2s}
+.nb.on{color:var(--blue)}
+.nb svg{width:22px;height:22px;stroke-width:2}
+.nb.on svg{stroke:var(--blue)}
+
+/* ══════════════════ HOME PAGE ══════════════════ */
+.home-header{background:linear-gradient(160deg,#5B9FEF 0%,#3D7CC9 100%);padding:calc(var(--safe-top) + 20px) 20px 36px;position:relative;overflow:hidden}
+.home-header::after{content:'';position:absolute;bottom:-24px;left:0;right:0;height:48px;background:var(--bg);border-radius:24px 24px 0 0}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.avatar{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;border:2px solid rgba(255,255,255,.4)}
+.hdr-name{font-size:1rem;font-weight:700;color:#fff;line-height:1.2}
+.hdr-sub{font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;line-height:1.3}
+.hdr-stats{display:flex;gap:20px}
+.hs-item{flex:1}
+.hs-label{font-size:.65rem;color:rgba(255,255,255,.7);margin-bottom:3px}
+.hs-val{font-size:1.6rem;font-weight:700;color:#fff;line-height:1;display:flex;align-items:baseline;gap:4px}
+.hs-unit{font-size:.75rem;font-weight:500}
+.hs-dash{font-size:1.2rem;color:rgba(255,255,255,.5)}
+
+.home-body{padding:10px 16px calc(70px + var(--safe-bottom))}
+
+/* 2x2 card grid */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.mode-card{background:var(--card);border-radius:20px;padding:18px 16px 16px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.mode-card:active{transform:scale(.96)}
+.mode-card.teal{background:var(--teal-bg)}
+.mode-card.orange{background:var(--orange-bg)}
+.mode-card.red{background:var(--red-bg)}
+.mode-card.indigo{background:var(--indigo-bg)}
+.mc-icon{font-size:1.6rem;margin-bottom:10px;display:block}
+.mc-icon svg{width:26px;height:26px}
+.mc-title{font-size:.92rem;font-weight:700;margin-bottom:3px}
+.mc-desc{font-size:.7rem;color:var(--muted);line-height:1.4}
+.mode-card.teal .mc-title{color:#1E8065}
+.mode-card.orange .mc-title{color:#B86E1A}
+.mode-card.red .mc-title{color:#C13A4A}
+.mode-card.indigo .mc-title{color:#3A5BAD}
+
+/* Section titles */
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sec-title{font-size:.95rem;font-weight:700;color:var(--text)}
+.sec-more{font-size:.75rem;color:var(--blue);cursor:pointer}
+
+/* Quick tools grid */
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:24px}
+.tool-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif}
+.tool-btn:active .ti{transform:scale(.9)}
+.ti{width:46px;height:46px;border-radius:14px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 1px 6px rgba(0,0,0,.07);transition:transform .15s}
+.tl{font-size:.65rem;color:var(--muted);font-weight:500;text-align:center}
+
+/* Stats panel */
+.stats-panel{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.sp-row{display:flex;gap:0}
+.sp-item{flex:1;text-align:center;padding:0 8px;position:relative}
+.sp-item+.sp-item::before{content:'';position:absolute;left:0;top:10%;height:80%;width:1px;background:var(--border)}
+.sp-n{font-size:1.4rem;font-weight:700;color:var(--blue);line-height:1;font-family:'DM Sans',serif}
+.sp-l{font-size:.65rem;color:var(--muted);margin-top:4px}
+
+/* ══════════════════ STUDY PAGE ══════════════════ */
+.study-header{background:linear-gradient(160deg,#5B9FEF,#3D7CC9);padding:calc(var(--safe-top)+16px) 18px 48px;position:relative}
+.study-header::after{content:'';position:absolute;bottom:-22px;left:0;right:0;height:44px;background:var(--bg);border-radius:22px 22px 0 0}
+.sh-title{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:2px}
+.sh-sub{font-size:.72rem;color:rgba(255,255,255,.75)}
+.study-body{padding:12px 16px calc(70px + var(--safe-bottom))}
+
+/* Category list */
+.cat-item{background:var(--card);border-radius:14px;padding:13px 16px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,.06);transition:transform .12s}
+.cat-item:active{transform:scale(.98)}
+.cat-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.cat-info{flex:1;min-width:0}
+.cat-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-meta{font-size:.68rem;color:var(--muted);margin-top:2px}
+.cat-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:5px}
+.cat-bar{height:100%;background:var(--teal);border-radius:2px;transition:width .5s}
+.cat-cnt{font-size:.72rem;font-weight:700;color:var(--blue);background:var(--blue-light);padding:2px 8px;border-radius:8px;flex-shrink:0}
+
+/* ══════════════════ QUESTION VIEW ══════════════════ */
+.qhdr{background:#fff;padding:calc(var(--safe-top)+12px) 18px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative;z-index:10}
+.qhdr-back{background:var(--blue-light);border:none;color:var(--blue);width:34px;height:34px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+.qhdr-info{flex:1}
+.qhdr-title{font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qhdr-sub{font-size:.65rem;color:var(--muted);margin-top:1px}
+.qhdr-timer{font-size:.9rem;font-weight:700;color:var(--blue);background:var(--blue-light);padding:5px 10px;border-radius:10px;flex-shrink:0;min-width:58px;text-align:center}
+.qhdr-timer.warn{background:#FDEEF0;color:var(--red)}
+
+.qprog-bar{height:3px;background:var(--border);flex-shrink:0}
+.qprog-fill{height:100%;background:linear-gradient(90deg,var(--blue),#74B3F8);transition:width .4s}
+
+.qscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.qbody{padding:16px 16px 80px}
+
+.qcard{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.qnum{font-size:.68rem;font-weight:700;color:var(--blue);background:var(--blue-light);display:inline-block;padding:3px 10px;border-radius:8px;margin-bottom:10px}
+.qimg-wrap{display:flex;justify-content:center;margin-bottom:12px}
+.qimg-wrap img{max-height:100px;border-radius:10px;object-fit:contain}
+.q-it{font-size:.72rem;color:var(--muted);font-style:italic;line-height:1.55;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.q-zh-row{display:flex;align-items:flex-start;gap:8px}
+.q-zh{font-size:.93rem;font-weight:500;line-height:1.65;flex:1}
+.btn-tl{background:var(--blue-light);border:none;color:var(--blue);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.68rem;font-family:'DM Sans',sans-serif;font-weight:600;flex-shrink:0;white-space:nowrap;margin-top:2px}
+
+.vf-row{display:flex;gap:10px;margin-bottom:12px}
+.vfb{flex:1;padding:18px 12px;border-radius:16px;border:2.5px solid var(--border);background:#fff;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:4px}
+.vfb .vf-label{font-size:.62rem;font-weight:500;color:var(--muted)}
+.vfb:active{transform:scale(.97)}
+.vfb.sel-v{background:var(--teal-bg);border-color:var(--teal);color:var(--teal)}
+.vfb.sel-v .vf-label{color:var(--teal)}
+.vfb.sel-f{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.vfb.sel-f .vf-label{color:var(--red)}
+.vfb.ok-v{background:var(--teal-bg)!important;border-color:var(--teal)!important;color:var(--teal)!important}
+.vfb.ok-f{background:var(--red-bg)!important;border-color:var(--red)!important;color:var(--red)!important}
+.vfb.dim{opacity:.3}
+
+.ans-card{border-radius:16px;padding:14px;margin-bottom:12px;border:1.5px solid}
+.ans-card.right{background:#E8F8F4;border-color:#3DB89A}
+.ans-card.wrong{background:#FDEEF0;border-color:#E05C6A}
+.ans-icon{font-size:1.1rem;margin-bottom:5px}
+.ans-msg{font-size:.83rem;font-weight:600;margin-bottom:4px}
+.ans-detail{font-size:.78rem;line-height:1.5;color:#555}
+
+.ai-card{background:linear-gradient(135deg,#EEF2FB,#E8EDF9);border-radius:16px;padding:14px;margin-bottom:12px;border:1.5px solid #C8D4F0}
+.ai-hdr{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.ai-hdr-t{font-size:.72rem;font-weight:700;color:var(--indigo)}
+.ai-txt{font-size:.82rem;color:#2A3A7A;line-height:1.6}
+
+.act-row{display:flex;gap:8px;margin-bottom:8px}
+.btn-ai{background:#fff;border:1.5px solid #C8D4F0;color:var(--indigo);border-radius:12px;padding:12px 14px;cursor:pointer;font-size:.8rem;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;flex-shrink:0}
+.btn-nxt{flex:1;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;border-radius:12px;padding:12px;cursor:pointer;font-size:.88rem;font-family:'DM Sans',sans-serif;font-weight:700;box-shadow:0 4px 14px rgba(74,144,226,.35)}
+
+/* ══════════════════ EXAM DOTS ══════════════════ */
+.exam-dots-wrap{background:#fff;border-bottom:1px solid var(--border);padding:10px 16px;flex-shrink:0}
+.exam-dots{display:flex;flex-wrap:wrap;gap:5px}
+.edot{width:26px;height:26px;border-radius:8px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;color:var(--muted);transition:all .12s;flex-shrink:0}
+.edot.ans{background:var(--blue);border-color:var(--blue);color:#fff}
+.edot.cur{border-color:var(--orange);color:var(--orange)}
+.edot.ans.cur{background:var(--orange);border-color:var(--orange);color:#fff}
+.exam-nav-bar{background:#fff;border-top:1px solid var(--border);padding:12px 16px;padding-bottom:calc(12px + var(--safe-bottom));display:flex;justify-content:space-between;align-items:center;gap:10px;flex-shrink:0}
+.btn-prev{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:11px 20px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;color:var(--text)}
+.btn-prev:disabled{opacity:.35;cursor:not-allowed}
+.btn-sub{background:linear-gradient(135deg,#E05C6A,#C13A4A);color:#fff;border:none;border-radius:12px;padding:11px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700}
+.btn-nxtq{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;border-radius:12px;padding:11px 20px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700}
+
+/* ══════════════════ RESULTS ══════════════════ */
+.res-page{padding:20px 16px calc(70px + var(--safe-bottom))}
+.res-banner{border-radius:22px;padding:28px 20px;text-align:center;margin-bottom:20px}
+.res-banner.pass{background:linear-gradient(135deg,#E8F8F4,#C8F0E4)}
+.res-banner.fail{background:linear-gradient(135deg,#FDEEF0,#F9D0D5)}
+.res-emoji{font-size:3rem;margin-bottom:10px}
+.res-title{font-size:1.6rem;font-weight:900;margin-bottom:4px}
+.res-banner.pass .res-title{color:#1E8065}
+.res-banner.fail .res-title{color:#C13A4A}
+.res-sub{font-size:.85rem;color:#555}
+.res-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.rn-card{background:#fff;border-radius:14px;padding:14px 8px;text-align:center;box-shadow:var(--shadow)}
+.rn-n{font-size:1.5rem;font-weight:700;line-height:1}
+.rn-l{font-size:.65rem;color:var(--muted);margin-top:4px}
+.rev-title{font-size:.9rem;font-weight:700;margin-bottom:12px}
+.rev-item{background:#fff;border-radius:14px;padding:13px;margin-bottom:8px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.rev-q{font-size:.8rem;line-height:1.45;margin-bottom:7px;color:var(--text)}
+.rev-tags{display:flex;gap:7px;flex-wrap:wrap}
+.rtag{font-size:.7rem;padding:3px 10px;border-radius:8px;font-weight:600}
+.rtag.c{background:#E8F8F4;color:#1E8065}
+.rtag.w{background:#FDEEF0;color:#C13A4A}
+.btn-again{display:block;width:100%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:16px;border-radius:16px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;box-shadow:0 4px 14px rgba(74,144,226,.35)}
+.btn-home{display:block;width:100%;background:#fff;color:var(--text);border:1.5px solid var(--border);padding:14px;border-radius:16px;font-size:.92rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* ══════════════════ CHAT ══════════════════ */
+.chat-hdr{background:linear-gradient(160deg,#5B9FEF,#3D7CC9);padding:calc(var(--safe-top)+14px) 18px 48px;position:relative}
+.chat-hdr::after{content:'';position:absolute;bottom:-22px;left:0;right:0;height:44px;background:var(--bg);border-radius:22px 22px 0 0}
+.ch-title{font-size:1.1rem;font-weight:700;color:#fff}
+.ch-sub{font-size:.72rem;color:rgba(255,255,255,.75);margin-top:3px}
+.chat-body{display:flex;flex-direction:column;flex:1;overflow:hidden;margin-top:10px}
+.chat-msgs{flex:1;overflow-y:auto;padding:0 16px 10px}
+.chat-quick{padding:8px 16px 0;display:flex;gap:6px;flex-wrap:wrap;background:transparent;flex-shrink:0}
+.qb{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:6px 12px;font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text);white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.qb:active{background:var(--blue-light);border-color:var(--blue)}
+.chat-form{display:flex;gap:8px;padding:10px 16px;padding-bottom:calc(10px + var(--safe-bottom));background:#fff;border-top:1px solid var(--border);flex-shrink:0}
+.cinp{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:22px;padding:9px 16px;font-size:.85rem;font-family:'DM Sans',sans-serif;outline:none;color:var(--text);min-width:0}
+.cinp:focus{border-color:var(--blue);background:#fff}
+.csend{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;border-radius:22px;padding:9px 18px;cursor:pointer;font-size:.82rem;font-family:'DM Sans',sans-serif;font-weight:700;flex-shrink:0}
+.msg{max-width:85%;padding:11px 15px;border-radius:18px;font-size:.83rem;line-height:1.6;word-break:break-word;margin-bottom:8px}
+.msg.u{align-self:flex-end;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-bottom-right-radius:5px}
+.msg.a{align-self:flex-start;background:#fff;color:var(--text);border-bottom-left-radius:5px;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.msg.ld{color:var(--muted)}
+.chat-intro{text-align:center;padding:30px 20px}
+.ci-av{width:64px;height:64px;background:linear-gradient(135deg,#5B9FEF,#3D7CC9);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 14px}
+.ci-t{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.ci-s{font-size:.78rem;color:var(--muted);line-height:1.6}
+
+/* ══════════════════ WRONG PAGE ══════════════════ */
+.wrong-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.we-ic{font-size:3rem;margin-bottom:12px}
+.we-t{font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:6px}
+.we-s{font-size:.8rem;line-height:1.6}
+.wrong-item{background:#fff;border-radius:14px;padding:13px;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.06);border-left:3px solid var(--red)}
+.wi-q{font-size:.83rem;line-height:1.45;margin-bottom:6px}
+.wi-ans{display:flex;gap:7px}
+.wi-tag{font-size:.7rem;padding:3px 9px;border-radius:8px;font-weight:600}
+.wi-tag.t{background:#E8F8F4;color:#1E8065}
+.wi-tag.f{background:#FDEEF0;color:#C13A4A}
+
+/* ══════════════════ MISC ══════════════════ */
+.sp2{display:inline-block;width:12px;height:12px;border:2px solid #C8D4F0;border-top-color:var(--indigo);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:9px 20px;border-radius:14px;font-size:.8rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.divd{height:1px;background:var(--border);margin:18px 0}
+.btn-primary{display:block;width:100%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:15px;border-radius:16px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(74,144,226,.3);text-align:center}
+.btn-primary:active{transform:scale(.98)}
+
+/* ══════════════════ VOCAB CARDS ══════════════════ */
+.vocab-hdr{background:linear-gradient(160deg,#9B6DD4,#7B4DB4);padding:calc(var(--safe-top)+16px) 18px 48px;position:relative}
+.vocab-hdr::after{content:'';position:absolute;bottom:-22px;left:0;right:0;height:44px;background:var(--bg);border-radius:22px 22px 0 0}
+.vh-title{font-size:1.1rem;font-weight:700;color:#fff}
+.vh-sub{font-size:.72rem;color:rgba(255,255,255,.75);margin-top:3px}
+.vocab-body{padding:12px 16px calc(70px + var(--safe-bottom))}
+.vocab-empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.ve-ic{font-size:3rem;margin-bottom:12px}
+.vocab-item{background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+.vi-word{font-size:.95rem;font-weight:700;flex:1;color:var(--dark)}
+.vi-meaning{font-size:.78rem;color:var(--muted);margin-top:2px}
+.vi-del{background:var(--red-bg);border:none;color:var(--red);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.72rem;flex-shrink:0}
+
+/* Flashcard study mode */
+.fc-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#9B6DD4,#5B3D94);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.fc-counter{color:rgba(255,255,255,.7);font-size:.8rem;margin-bottom:20px}
+.fc-card{background:#fff;border-radius:24px;width:100%;max-width:340px;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;text-align:center;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.2);transition:transform .3s}
+.fc-card:active{transform:scale(.97)}
+.fc-word{font-size:1.8rem;font-weight:700;color:var(--dark);margin-bottom:12px}
+.fc-hint{font-size:.78rem;color:var(--muted)}
+.fc-meaning{font-size:1rem;color:var(--indigo);font-weight:600;margin-top:12px;display:none}
+.fc-card.flipped .fc-hint{display:none}
+.fc-card.flipped .fc-meaning{display:block}
+.fc-card.flipped .fc-word{color:var(--indigo)}
+.fc-btns{display:flex;gap:12px;margin-top:24px;width:100%;max-width:340px}
+.fc-btn{flex:1;padding:14px;border-radius:16px;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer}
+.fc-btn.know{background:#E8F8F4;color:#1E8065}
+.fc-btn.dontknow{background:#FDEEF0;color:#C13A4A}
+.fc-close{position:absolute;top:calc(var(--safe-top)+16px);right:20px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
+
+/* Add word button */
+.btn-addword{background:#fff;border:1.5px solid #C8D4F0;color:var(--indigo);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:.72rem;font-family:'DM Sans',sans-serif;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-top:6px}
+
+/* Explanation card */
+.exp-card{background:linear-gradient(135deg,#FDF4E7,#FDE8CC);border:1.5px solid #F0C870;border-radius:16px;padding:14px;margin-bottom:12px}
+.exp-hdr{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.exp-hdr-t{font-size:.72rem;font-weight:700;color:#8B5E00}
+.exp-txt{font-size:.82rem;color:#5A3A00;line-height:1.6}
+
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── Loading ── -->
+<div id="ls">
+  <div class="ls-ic">🚗</div>
+  <div class="ls-t">意驾题库</div>
+  <div class="ls-s" id="lm">正在加载7139道官方原题…</div>
+  <div class="ls-bw"><div class="ls-b" id="lb"></div></div>
+  <div class="ls-p" id="lp">0%</div>
+</div>
+
+<!-- ── Home Tab ── -->
+<div id="tab-home" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="scroll">
+    <div class="home-header" id="home-header">
+      <div class="hdr-top">
+        <div class="avatar">🎓</div>
+        <div>
+          <div class="hdr-name">Buonasera, 同学</div>
+          <div class="hdr-sub">搞定Quiz，也是在搞定意大利语。双倍进步！</div>
+        </div>
+      </div>
+      <div class="hdr-stats">
+        <div class="hs-item">
+          <div class="hs-label">距离考试</div>
+          <div class="hs-val"><span id="days-val">?</span><span class="hs-unit">天</span></div>
+        </div>
+        <div class="hs-item" style="text-align:right">
+          <div class="hs-label">考试通过率</div>
+          <div class="hs-val" style="justify-content:flex-end"><span id="pass-rate">--</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-body">
+      <!-- 4 mode cards -->
+      <div class="card-grid" style="margin-top:8px">
+        <div class="mode-card teal" onclick="startExam()">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3DB89A" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="mc-title">模拟考试</div>
+          <div class="mc-desc">20 分钟 · 最多错3题</div>
+        </div>
+        <div class="mode-card orange" onclick="startRandom()">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E8973A" stroke-width="2.2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+          </div>
+          <div class="mc-title">随机练习</div>
+          <div class="mc-desc">全题库 · 带翻译和解析</div>
+        </div>
+        <div class="mode-card red" onclick="startWrongPractice()">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E05C6A" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="mc-title">错题本</div>
+          <div class="mc-desc" id="wrong-desc">查漏补缺 · 精准提分</div>
+        </div>
+        <div class="mode-card indigo" onclick="switchMain('study')">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5B7FD4" stroke-width="2.2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <div class="mc-title">章节练习</div>
+          <div class="mc-desc">25个章节 · 系统学习</div>
+        </div>
+      </div>
+
+      <!-- Quick tools -->
+      <div class="sec-hdr">
+        <div class="sec-title">快捷工具</div>
+        <div class="sec-more">全部 ›</div>
+      </div>
+      <div class="tools-grid">
+        <button class="tool-btn" onclick="switchMain('chat')">
+          <div class="ti" style="background:linear-gradient(135deg,#EEF2FB,#DDE5F8)">🤖</div>
+          <div class="tl">AI助教</div>
+        </button>
+        <button class="tool-btn" onclick="startWrongPractice()">
+          <div class="ti" style="background:linear-gradient(135deg,#FFF0F2,#FFE0E5)">📚</div>
+          <div class="tl">错题练习</div>
+        </button>
+        <button class="tool-btn" onclick="startMustRight()">
+          <div class="ti" style="background:linear-gradient(135deg,#E8F8F4,#C8F0E4)">✅</div>
+          <div class="tl">必对题</div>
+        </button>
+        <button class="tool-btn" onclick="startMustWrong()">
+          <div class="ti" style="background:linear-gradient(135deg,#FFF0E8,#FFE0CC)">❌</div>
+          <div class="tl">必错题</div>
+        </button>
+        <button class="tool-btn" onclick="switchMain('vocab')">
+          <div class="ti" style="background:linear-gradient(135deg,#EEF2FB,#DDE5F8)">🔖</div>
+          <div class="tl">我的收藏</div>
+        </button>
+        <button class="tool-btn" onclick="startUnseen()">
+          <div class="ti" style="background:linear-gradient(135deg,#FFFDE8,#FFF5C0)">⭐</div>
+          <div class="tl">新题挑战</div>
+        </button>
+        <button class="tool-btn" onclick="showStatsDetail()">
+          <div class="ti" style="background:linear-gradient(135deg,#E8F8F4,#C8F0E4)">📊</div>
+          <div class="tl">学习透视</div>
+        </button>
+        <button class="tool-btn" onclick="showToast('历史记录开发中')">
+          <div class="ti" style="background:linear-gradient(135deg,#F4F4F8,#E8E8F0)">🕐</div>
+          <div class="tl">做题历史</div>
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="sec-hdr">
+        <div class="sec-title">学习数据</div>
+        <div class="sec-more" onclick="showStatsDetail()">详情 ›</div>
+      </div>
+      <div class="stats-panel">
+        <div class="sp-row" id="sp-row"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Study Tab ── -->
+<div id="tab-study" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="study-header">
+    <div class="sh-title">理论学习</div>
+    <div class="sh-sub" id="study-sub">25个章节 · 系统备考</div>
+  </div>
+  <div class="scroll" style="margin-top:22px">
+    <div class="page" style="padding:16px 16px calc(70px + var(--safe-bottom))" id="cat-list"></div>
+  </div>
+</div>
+
+<!-- ── Question View (overlay) ── -->
+<div id="qview" style="display:none;flex-direction:column;height:100%;overflow:hidden;position:absolute;inset:0;background:var(--bg);z-index:50">
+  <div class="qhdr" id="qhdr">
+    <button class="qhdr-back" onclick="exitQ()">‹</button>
+    <div class="qhdr-info">
+      <div class="qhdr-title" id="qhdr-title">练习</div>
+      <div class="qhdr-sub" id="qhdr-sub">--</div>
+    </div>
+    <div class="qhdr-timer" id="qhdr-timer" style="display:none"></div>
+  </div>
+  <div class="qprog-bar"><div class="qprog-fill" id="qprog-fill" style="width:0%"></div></div>
+
+  <!-- Exam dots (only for exam) -->
+  <div id="exam-dots-wrap" style="display:none" class="exam-dots-wrap">
+    <div class="exam-dots" id="exam-dots"></div>
+  </div>
+
+  <div class="qscroll" id="qscroll">
+    <div class="qbody" id="qbody"></div>
+  </div>
+
+  <!-- Practice bottom -->
+  <div id="prac-bottom" style="display:none;background:#fff;border-top:1px solid var(--border);padding:12px 16px;padding-bottom:calc(12px + var(--safe-bottom))">
+    <div class="act-row">
+      <button class="btn-ai" id="btn-ai-exp" onclick="doAiExplain()">📖 查看解析</button>
+      <button class="btn-nxt" id="btn-nxt" onclick="nextQ()">下一题 →</button>
+    </div>
+  </div>
+
+  <!-- Exam nav -->
+  <div id="exam-nav" class="exam-nav-bar" style="display:none">
+    <button class="btn-prev" id="btn-prev" onclick="examNav(-1)">← 上一题</button>
+    <div id="exam-nav-right"></div>
+  </div>
+</div>
+
+<!-- ── Chat Tab ── -->
+<div id="tab-chat" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="chat-hdr">
+    <div class="ch-title">👨‍🏫 AI助教</div>
+    <div class="ch-sub">随时用中文问我意大利交通法规问题</div>
+  </div>
+  <div class="chat-body">
+    <div class="chat-msgs" id="chat-msgs" style="display:flex;flex-direction:column">
+      <div class="chat-intro" id="chat-intro">
+        <div class="ci-av">🤖</div>
+        <div class="ci-t">意驾AI老师</div>
+        <div class="ci-s">你好！我专为中国人备考意大利B驾照而设计。<br>用中文问我任何交通规则问题吧！</div>
+      </div>
+    </div>
+    <div class="chat-quick" id="chat-quick">
+      <div class="qb" onclick="qc('城区默认限速是多少？')">城区限速</div>
+      <div class="qb" onclick="qc('STOP与让行标志区别？')">STOP vs 让行</div>
+      <div class="qb" onclick="qc('新驾照前三年的特殊限制？')">新手限制</div>
+      <div class="qb" onclick="qc('哪些情况绝对禁止超车？')">禁止超车</div>
+      <div class="qb" onclick="qc('酒驾法律后果？')">酒驾处罚</div>
+      <div class="qb" onclick="qc('考试最容易错的陷阱题有哪些？')">考试陷阱</div>
+    </div>
+    <div class="chat-form">
+      <input class="cinp" id="cinp" placeholder="用中文问老师…" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()">
+      <button class="csend" onclick="sendChat()">发送</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── My Tab (错题) ── -->
+<div id="tab-my" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="study-header">
+    <div class="sh-title">错题本</div>
+    <div class="sh-sub" id="wrong-hdr-sub">专攻薄弱，精准提分</div>
+  </div>
+  <div class="scroll" style="margin-top:22px">
+    <div class="page" style="padding:16px 16px calc(70px + var(--safe-bottom))" id="wrong-list"></div>
+  </div>
+</div>
+
+<!-- ── Bottom Nav ── -->
+<nav class="nav" id="nav">
+  <button class="nb on" id="nb-home" onclick="switchMain('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    主页
+  </button>
+  <button class="nb" id="nb-study" onclick="switchMain('study')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+    理论学习
+  </button>
+  <button class="nb" id="nb-my" onclick="switchMain('my')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    我的
+  </button>
+</nav>
+
+
+  <!-- ── Vocab Tab ── -->
+  <div id="tab-vocab" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+    <div class="vocab-hdr">
+      <div class="vh-title">📚 单词卡</div>
+      <div class="vh-sub" id="vocab-sub">收藏题目中的生词，随时复习</div>
+    </div>
+    <div class="scroll" style="margin-top:22px">
+      <div class="vocab-body" id="vocab-list"></div>
+    </div>
+  </div>
+  <!-- Flashcard overlay -->
+  <div id="fc-overlay" class="fc-overlay" style="display:none">
+    <button class="fc-close" onclick="closeFC()">✕</button>
+    <div class="fc-counter" id="fc-counter"></div>
+    <div class="fc-card" id="fc-card" onclick="flipFC()">
+      <div class="fc-word" id="fc-word"></div>
+      <div class="fc-hint">点击翻转查看中文</div>
+      <div class="fc-meaning" id="fc-meaning"></div>
+    </div>
+    <div class="fc-btns">
+      <button class="fc-btn dontknow" onclick="fcAnswer(false)">还不会 😅</button>
+      <button class="fc-btn know" onclick="fcAnswer(true)">已掌握 ✓</button>
+    </div>
+  </div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════
+const CDN='https://cdn.jsdelivr.net/gh/Ed0ardo/QuizPatenteB@main';
+const IMGB=CDN+'/img_sign/';
+const JURL=CDN+'/quizPatenteB2023.json';
+
+let AQ=[],TR={},WR=new Set(),SN=new Set();
+let STATS={answered:0,correct:0,exams:0,passed:0};
+let PL=[],PI=0,PS=false,PM='practice';
+let EQ=[],EA={},EI=0,ESec=0,ET=null,ED=false;
+let CH=[],chatMode=false;
+let VOCAB=new Map();
+let RAW_STRUCT={};  // raw nested {cat:{subcat:[{q,a,img}]}}
+let curTab='home';
+let aiExp={loading:false,qid:null,txt:null};
+
+// ═══════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════
+function loadS(){try{
+  TR=JSON.parse(localStorage.getItem('pt')||'{}');
+  const vs=localStorage.getItem('pvocab');
+  if(vs){const arr=JSON.parse(vs);arr.forEach(v=>VOCAB.set(v.word,v));}WR=new Set(JSON.parse(localStorage.getItem('pw')||'[]'));SN=new Set(JSON.parse(localStorage.getItem('ps')||'[]'));STATS=JSON.parse(localStorage.getItem('pst')||'{"answered":0,"correct":0,"exams":0,"passed":0}');}catch(e){}}
+function saveW(){localStorage.setItem('pw',JSON.stringify([...WR]));}
+function saveVocab(){try{localStorage.setItem('pvocab',JSON.stringify([...VOCAB.values()]));}catch(e){}}
+function saveSN(){localStorage.setItem('ps',JSON.stringify([...SN]));}
+function saveST(){localStorage.setItem('pst',JSON.stringify(STATS));}
+function saveTR(id,zh){TR[id]=zh;try{localStorage.setItem('pt',JSON.stringify(TR));}catch(e){}}
+
+// ═══════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════
+function slp(ms){return new Promise(r=>setTimeout(r,ms));}
+function conc(arr){let t=arr.reduce((s,a)=>s+a.length,0),o=new Uint8Array(t),off=0;for(const a of arr){o.set(a,off);off+=a.length;}return o;}
+
+async function boot(){
+  loadS();
+  const bar=document.getElementById('lb'),pct=document.getElementById('lp'),msg=document.getElementById('lm');
+  const cached=localStorage.getItem('pq1');
+  if(cached){try{msg.textContent='从缓存加载题库…';bar.style.width='60%';AQ=JSON.parse(cached);bar.style.width='100%';pct.textContent=AQ.length+'题';await slp(300);initApp();return;}catch(e){}}
+  try{
+    msg.textContent='下载官方题库 (~2MB)…';
+    const res=await fetch(JURL);if(!res.ok)throw 0;
+    const tot=parseInt(res.headers.get('content-length')||'0');
+    const rdr=res.body.getReader();let cks=[],rcv=0;
+    while(1){const{done,value}=await rdr.read();if(done)break;cks.push(value);rcv+=value.length;if(tot>0){const p=Math.round(rcv/tot*88);bar.style.width=p+'%';pct.textContent=p+'%';}}
+    bar.style.width='96%';msg.textContent='解析中…';
+    const txt=new TextDecoder().decode(conc(cks));
+    const raw=JSON.parse(txt);
+if(Array.isArray(raw)){AQ=raw;}
+else{
+  RAW_STRUCT=raw;
+  AQ=[];let id=1;
+  Object.entries(raw).forEach(([cat,subs])=>{
+    if(Array.isArray(subs)){
+      subs.forEach(q=>{AQ.push({id:id++,testo:q.q||'',risposta:q.a!==undefined?q.a:true,argomento:cat,sub:cat,immagine:q.img?q.img.replace('/img_sign/',''):null});});
+    }else{
+      Object.entries(subs).forEach(([sub,qs])=>{
+        if(Array.isArray(qs)){
+          qs.forEach(q=>{AQ.push({id:id++,testo:q.q||'',risposta:q.a!==undefined?q.a:true,argomento:cat,sub:sub,immagine:q.img?q.img.replace('/img_sign/',''):null});});
+        }
+      });
+    }
+  });
+}
+try{localStorage.setItem('pq1',JSON.stringify(AQ));}catch(e){}
+    bar.style.width='100%';pct.textContent=AQ.length+'题';await slp(400);initApp();
+  }catch(e){
+    msg.textContent='⚠ 使用内置题库…';bar.style.width='100%';AQ=FB;await slp(600);initApp();
+  }
+}
+
+function initApp(){
+  document.getElementById('ls').style.display='none';
+  document.getElementById('tab-home').style.display='flex';
+  switchMain('home');
+  renderCats();renderWrong();renderVocab();
+}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function switchMain(tab){
+  ['home','study','chat','my','vocab'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display='none';
+    const nb=document.getElementById('nb-'+t);
+    if(nb)nb.classList.remove('on');
+  });
+  const tel=document.getElementById('tab-'+tab);
+  if(tel)tel.style.display='flex';
+  const tnb=document.getElementById('nb-'+tab);
+  if(tnb)tnb.classList.add('on');
+  curTab=tab;
+  if(tab==='home')refreshHome();
+  if(tab==='my')renderWrong();
+  if(tab==='vocab')renderVocab();
+}
+
+// ═══════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════
+function refreshHome(){
+  const pct=STATS.answered?Math.round(STATS.correct/STATS.answered*100):null;
+  document.getElementById('pass-rate').textContent=pct!==null?pct+'%':'--';
+  document.getElementById('wrong-desc').textContent=WR.size>0?WR.size+'题待复习 · 精准提分':'查漏补缺 · 精准提分';
+  document.getElementById('sp-row').innerHTML=
+    `<div class="sp-item"><div class="sp-n">${AQ.length.toLocaleString()}</div><div class="sp-l">题库总数</div></div>`+
+    `<div class="sp-item"><div class="sp-n">${SN.size.toLocaleString()}</div><div class="sp-l">已练习</div></div>`+
+    `<div class="sp-item"><div class="sp-n">${WR.size}</div><div class="sp-l">错题数</div></div>`+
+    `<div class="sp-item"><div class="sp-n">${STATS.exams}</div><div class="sp-l">考试次数</div></div>`;
+}
+
+function showStatsDetail(){
+  showToast(`已练${SN.size}题 · 正确率${STATS.answered?Math.round(STATS.correct/STATS.answered*100):0}% · 考试${STATS.exams}次`);
+}
+
+// ═══════════════════════════════════════════════
+//  CATEGORIES
+// ═══════════════════════════════════════════════
+function getCats(){
+  const m={};AQ.forEach(q=>{const c=q.argomento||q.categoria||q.category||'其他';if(!m[c])m[c]={t:0,d:0};m[c].t++;if(SN.has(q.id))m[c].d++;});return m;
+}
+
+const CAT_COLORS=['#3DB89A','#E8973A','#E05C6A','#5B7FD4','#9B6DD4','#3BA8D8','#D48B3B','#4DAF7C'];
+function renderCats(){
+  const el=document.getElementById('cat-list');if(!el)return;el.innerHTML='';
+  // Build structure: cat -> {subs: {subname: [ids]}, total, done}
+  const struct={};
+  AQ.forEach(q=>{
+    const cat=q.argomento||'其他';
+    const sub=q.sub||cat;
+    if(!struct[cat])struct[cat]={subs:{},total:0,done:0};
+    if(!struct[cat].subs[sub])struct[cat].subs[sub]={ids:[],done:0};
+    struct[cat].subs[sub].ids.push(q.id);
+    struct[cat].total++;
+    if(SN.has(q.id)){struct[cat].done++;struct[cat].subs[sub].done++;}
+  });
+  const entries=Object.entries(struct).sort((a,b)=>b[1].total-a[1].total);
+  document.getElementById('study-sub').textContent=entries.length+'个章节 · 系统备考';
+  entries.forEach(([cat,info],i)=>{
+    const col=CAT_COLORS[i%CAT_COLORS.length];
+    const p=info.total?Math.round(info.done/info.total*100):0;
+    const subEntries=Object.entries(info.subs);
+    const hasSubs=subEntries.length>1||(subEntries.length===1&&subEntries[0][0]!==cat);
+    const wrap=document.createElement('div');wrap.style.marginBottom='8px';
+    // Chapter header
+    const hdr=document.createElement('div');hdr.className='cat-item';
+    hdr.style.cursor=hasSubs?'pointer':'pointer';
+    hdr.innerHTML=`<div class="cat-dot" style="background:${col}"></div><div class="cat-info" style="flex:1"><div class="cat-name">${cat}</div><div class="cat-meta">${info.total}题 · 已练${info.done}题<div class="cat-bar-wrap"><div class="cat-bar" style="width:${p}%;background:${col}"></div></div></div></div><div class="cat-cnt">${info.total}</div>${hasSubs?'<div style="color:var(--muted);margin-left:6px;font-size:.8rem" id="arr-'+i+'">▼</div>':''}`;
+    wrap.appendChild(hdr);
+    // Sub-units container
+    if(hasSubs){
+      const subWrap=document.createElement('div');
+      subWrap.id='subs-'+i;subWrap.style.display='none';subWrap.style.paddingLeft='12px';subWrap.style.marginTop='4px';
+      subEntries.forEach(([sub,subInfo])=>{
+        const sp=subInfo.ids.length?Math.round(subInfo.done/subInfo.ids.length*100):0;
+        const sd=document.createElement('div');sd.className='cat-item';sd.style.borderRadius='12px';sd.style.marginBottom='6px';
+        sd.onclick=()=>startByIds(subInfo.ids,sub);
+        const corr=subInfo.ids.filter(id=>!WR.has(id)&&SN.has(id)).length;
+        const err=subInfo.ids.filter(id=>WR.has(id)).length;
+        const unseen=subInfo.ids.length-SN.size>0?subInfo.ids.filter(id=>!SN.has(id)).length:0;
+        sd.innerHTML=`<div class="cat-dot" style="background:${col};width:6px;height:6px"></div><div class="cat-info" style="flex:1"><div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div><div style="font-size:.65rem;color:var(--muted);margin-top:2px"><span style="color:var(--teal)">正确${corr}</span> <span style="color:var(--red)">错误${err}</span> <span style="color:var(--orange)">未答${unseen}</span></div><div class="cat-bar-wrap"><div class="cat-bar" style="width:${sp}%;background:${col}"></div></div></div><div class="cat-cnt" style="font-size:.68rem">${subInfo.ids.length}</div>`;
+        subWrap.appendChild(sd);
+      });
+      wrap.appendChild(subWrap);
+      hdr.onclick=()=>{
+        const isOpen=subWrap.style.display!=='none';
+        subWrap.style.display=isOpen?'none':'block';
+        const arr=document.getElementById('arr-'+i);
+        if(arr)arr.textContent=isOpen?'▼':'▲';
+      };
+    }else{
+      hdr.onclick=()=>startByCat(cat);
+    }
+    el.appendChild(wrap);
+  });
+}
+
+function startByIds(ids,title){
+  const list=ids.map(id=>AQ.find(q=>q.id===id)).filter(Boolean);
+  openQ(list,title,'practice');
+}
+
+// ═══════════════════════════════════════════════
+//  PRACTICE
+// ═══════════════════════════════════════════════
+function shuf(a){return[...a].sort(()=>Math.random()-.5);}
+function CA(q){return q.risposta===true||q.risposta==='V'||q.risposta===1;}
+
+function startRandom(){openQ(shuf(AQ),'随机练习','practice');}
+function startWrongPractice(){const l=AQ.filter(q=>WR.has(q.id));if(!l.length){showToast('错题本是空的！');return;}openQ(shuf(l),'错题复习','practice');}
+function startUnseen(){const l=AQ.filter(q=>!SN.has(q.id));if(!l.length){showToast('全部题目都练过了！');return;}openQ(shuf(l),'新题挑战','practice');}
+function startByCat(cat){openQ(shuf(AQ.filter(q=>(q.argomento||q.categoria||q.category||'其他')===cat)),cat,'practice');}
+function startMustRight(){const top=AQ.filter(q=>!WR.has(q.id)&&SN.has(q.id));if(!top.length){showToast('暂无数据');return;}openQ(shuf(top).slice(0,50),'必对题','practice');}
+function startMustWrong(){if(!WR.size){showToast('还没有错题！');return;}openQ(shuf(AQ.filter(q=>WR.has(q.id))),'必错题','practice');}
+
+function openQ(list,title,mode){
+  PL=list;PI=0;PS=false;PM=mode;aiExp={loading:false,qid:null,txt:null};
+  document.getElementById('qhdr-title').textContent=title;
+  document.getElementById('exam-dots-wrap').style.display='none';
+  document.getElementById('exam-nav').style.display='none';
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('qhdr-timer').style.display='none';
+  document.getElementById('qview').style.display='flex';
+  renderPQ();
+}
+
+function exitQ(){
+  document.getElementById('qview').style.display='none';
+  if(ET){clearInterval(ET);ET=null;}
+  refreshHome();renderCats();renderWrong();
+}
+
+function renderPQ(){
+  const q=PL[PI];
+  if(!q){finishPractice();return;}
+  PS=false;aiExp={loading:false,qid:null,txt:null};
+  SN.add(q.id);saveSN();
+  const prog=Math.round((PI+1)/PL.length*100);
+  document.getElementById('qprog-fill').style.width=prog+'%';
+  document.getElementById('qhdr-sub').textContent=`${PI+1} / ${PL.length}`;
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('btn-ai-exp').style.display='block';
+
+  const zh=TR[q.id];const img=q.immagine?`<div class="qimg-wrap"><img src="${IMGB}${q.immagine}" onerror="this.style.display='none'" loading="lazy"></div>`:'';
+  document.getElementById('qbody').innerHTML=`
+    <div class="qcard">
+      <div class="qnum">${q.argomento||q.categoria||q.category||'一般'}</div>
+      ${img}
+      <div class="q-it">${q.testo||q.domanda||q.text||''}</div>
+      <div class="q-zh-row">
+        <div class="q-zh" id="qzh">${zh?zh:'<span style="color:var(--muted);font-size:.78rem">点击翻译按钮获取中文</span>'}</div>
+        <button class="btn-tl" onclick="doTranslate(${q.id})">🤖 翻译</button>
+      </div>
+    </div>
+    <div class="vf-row">
+      <button class="vfb" id="bv" onclick="ansP(true)">
+        <span style="font-size:1.4rem">✓</span>
+        <span>VERO</span>
+        <span class="vf-label">正确</span>
+      </button>
+      <button class="vfb" id="bf" onclick="ansP(false)">
+        <span style="font-size:1.4rem">✗</span>
+        <span>FALSO</span>
+        <span class="vf-label">错误</span>
+      </button>
+    </div>
+    <div id="ans-area"></div>
+  `;
+  document.getElementById('qscroll').scrollTop=0;
+}
+
+function ansP(ans){
+  if(PS)return;PS=true;
+  const q=PL[PI];const cor=CA(q);const ok=ans===cor;
+  STATS.answered++;if(ok){STATS.correct++;WR.delete(q.id);}else{WR.add(q.id);}
+  saveST();saveW();refreshHome();
+
+  const bv=document.getElementById('bv'),bf=document.getElementById('bf');
+  if(!bv||!bf)return;bv.disabled=bf.disabled=true;
+  if(cor){bv.classList.add('ok-v');bf.classList.add('dim');}else{bf.classList.add('ok-f');bv.classList.add('dim');}
+  if(ans&&!ok)bv.classList.add('ok-f');if(!ans&&!ok)bf.classList.add('ok-f');
+
+  const area=document.getElementById('ans-area');
+  area.innerHTML=`<div class="ans-card ${ok?'right':'wrong'}">
+    <div class="ans-icon">${ok?'✅':'❌'}</div>
+    <div class="ans-msg">${ok?'回答正确！':'回答错误'}</div>
+    <div class="ans-detail">正确答案：<b>${cor?'VERO（正确）':'FALSO（错误）'}</b></div>
+  </div>`;
+  document.getElementById('prac-bottom').style.display='block';
+  document.getElementById('btn-nxt').textContent=PI<PL.length-1?'下一题 →':'完成 ✓';
+}
+
+function nextQ(){
+  PI++;aiExp={loading:false,qid:null,txt:null};
+  if(PI>=PL.length){finishPractice();return;}
+  renderPQ();
+}
+
+function finishPractice(){
+  document.getElementById('qbody').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:3.5rem;margin-bottom:16px">🎉</div><div style="font-size:1.2rem;font-weight:700;margin-bottom:8px">练习完成！</div><div style="color:var(--muted);font-size:.85rem;margin-bottom:28px">${PL.length}题全部完成</div><button class="btn-primary" onclick="exitQ()">返回主页</button></div>`;
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('qprog-fill').style.width='100%';
+}
+
+async function doTranslate(id){
+  const q=AQ.find(x=>x.id===id);if(!q)return;
+  if(TR[id]){
+    const el=document.getElementById('qzh');if(el)el.textContent=TR[id];
+    addWordBtn(id,TR[id],q);return;
+  }
+  const btn=event.currentTarget||event.target;
+  const origTxt=btn.textContent;btn.textContent='…';btn.disabled=true;
+  const txt=q.testo||q.domanda||q.text||'';
+  try{
+    // Use MyMemory free translation API (no key needed)
+    const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(txt)+'&langpair=it|zh';
+    const res=await fetch(url);
+    const data=await res.json();
+    let zh=data.responseData?.translatedText||'';
+    // Clean up common issues
+    zh=zh.replace(/MYMEMORY WARNING[^]*/i,'').trim();
+    if(!zh||zh.length<2)throw new Error('empty');
+    saveTR(id,zh);
+    const el=document.getElementById('qzh');
+    if(el){el.textContent=zh;}
+    addWordBtn(id,zh,q);
+  }catch(e){
+    const el=document.getElementById('qzh');
+    if(el)el.textContent='翻译失败，请重试';
+  }
+  btn.textContent=origTxt;btn.disabled=false;
+}
+
+function addWordBtn(id,zh,q){
+  const existing=document.getElementById('wbtn-'+id);if(existing)return;
+  const el=document.getElementById('qzh');if(!el)return;
+  const wbtn=document.createElement('button');
+  wbtn.className='btn-addword';wbtn.id='wbtn-'+id;
+  wbtn.innerHTML='＋ 生词';
+  const txt=q.testo||q.domanda||q.text||'';
+  wbtn.onclick=()=>showAddWordModal(txt,zh);
+  el.parentNode.appendChild(wbtn);
+}
+
+async function doExplain(q){
+  if(!q)q=PL[PI];if(!q)return;
+  const area=document.getElementById('ans-area');if(!area)return;
+  const cor=CA(q);
+  const existing=area.querySelector('.exp-card');if(existing){existing.remove();}
+  const card=document.createElement('div');card.className='exp-card';
+  card.innerHTML=`<div class="exp-hdr"><div class="sp2"></div><span class="exp-hdr-t">📖 解析生成中…</span></div><div class="exp-txt" id="exp-txt-inner">正在翻译题目…</div>`;
+  area.appendChild(card);
+  const txt=q.testo||q.domanda||q.text||'';
+  const cat=q.argomento||q.sub||'';
+  try{
+    // Step1: translate with Google (free)
+    const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=zh-CN&dt=t&q='+encodeURIComponent(txt);
+    const res=await fetch(url);const data=await res.json();
+    const zhTxt=data[0]?.map(x=>x[0]||'').join('')||'（翻译失败）';
+    // Step2: build smart explanation based on category + answer
+    const exp=buildExplanation(txt,zhTxt,cat,cor);
+    const hdr=card.querySelector('.exp-hdr');hdr.innerHTML='<span class="exp-hdr-t">📖 题目解析</span>';
+    const inner=card.querySelector('#exp-txt-inner');if(inner)inner.innerHTML=exp;
+    // Cache translation
+    if(!TR[q.id]){saveTR(q.id,zhTxt);const el=document.getElementById('qzh');if(el&&el.textContent.includes('点击'))el.textContent=zhTxt;}
+  }catch(e){
+    const hdr=card.querySelector('.exp-hdr');
+    hdr.innerHTML='<span class="exp-hdr-t" style="color:var(--red)">📖 解析失败，请检查网络</span>';
+  }
+}
+
+function buildExplanation(it,zh,cat,correct){
+  const ans=correct?'<span style="color:#1E8065;font-weight:700">✓ VERO（正确）</span>':'<span style="color:#C13A4A;font-weight:700">✗ FALSO（错误）</span>';
+  // Knowledge base by category keywords
+  const KB={
+    'velocita':['速度规则：城区50，次郊90，主郊110，高速130 km/h。雨天降档（高速→110，主郊→90）。新驾照前3年高速最高110。','速度限制是最常考内容，记住四个数字：50/90/110/130。'],
+    'alcol':['酒精法规：一般驾驶人上限0.5g/l，新驾照前3年+职业驾驶人必须0g/l（零容忍）。','记忆口诀：新手和职业=零酒精；普通人=0.5上限。'],
+    'segnali':['标志分类：三角形=危险警告（白底红边），圆形红=禁止，圆形蓝=义务，菱形黄=优先道路。','STOP=八角红色，必须完全停车。让行=倒三角，可不停但须让行。'],
+    'precedenza':['优先权规则：无标志路口=右方优先。有轨电车永远优先。主路车优先于支路车。','记忆：右侧来车先走，电车永远优先。'],
+    'sorpasso':['超车禁区：弯道、坡顶、路口、隧道、铁路道口、人行横道附近均禁止超车。高速只能从左侧超车。','中央实线=禁止跨越（不能超车）。虚线=可超车（需安全条件）。'],
+    'cinture':['安全带：所有道路、所有座位（含后排）必须系。12岁以下且不足150cm必须用儿童安全座椅。','记忆：所有人、所有时候都要系。没有例外。'],
+    'sosta':['停车禁区：斑马线、路口5米内、消防栓旁、黄线处、双实线旁、消防通道等。蓝线=付费停车，白线=免费。','禁止停=一条斜线；禁止停靠=两条斜线（更严格，连上下客都不行）。'],
+    'default':['本题考查：'+cat+'。','正确答案是'+(correct?'VERO（正确/真）':'FALSO（错误/假）')+'。建议结合题目内容记忆。']
+  };
+  let catKey='default';
+  const catL=cat.toLowerCase();
+  for(const k of Object.keys(KB)){if(catL.includes(k)){catKey=k;break;}}
+  // Also check question text keywords
+  const itL=it.toLowerCase();
+  if(catKey==='default'){
+    if(itL.includes('velocit')||itL.includes('km/h'))catKey='velocita';
+    else if(itL.includes('alcol')||itL.includes('alcolemico'))catKey='alcol';
+    else if(itL.includes('segnale')||itL.includes('cartello'))catKey='segnali';
+    else if(itL.includes('precedenza'))catKey='precedenza';
+    else if(itL.includes('sorpass'))catKey='sorpasso';
+    else if(itL.includes('cintura'))catKey='cinture';
+    else if(itL.includes('sosta')||itL.includes('parcheggi'))catKey='sosta';
+  }
+  const [law,tip]=KB[catKey]||KB['default'];
+  return `<b>① 答案：</b>${ans}<br><br><b>② 题目中文：</b>${zh}<br><br><b>③ 法规要点：</b>${law}<br><br><b>④ 记忆技巧：</b>${tip}`;
+}
+
+async function doAiExplain(){doExplain(PL[PI]);}
+
+// ═══════════════════════════════════════════════
+//  EXAM
+// ═══════════════════════════════════════════════
+function startExam(){
+  EQ=shuf(AQ).slice(0,30);EA={};EI=0;ED=false;ESec=20*60;
+  clearInterval(ET);
+  ET=setInterval(()=>{ESec--;updTimer();if(ESec<=0){clearInterval(ET);ET=null;submitExam();}},1000);
+  PM='exam';PL=EQ;PI=0;PS=false;
+
+  document.getElementById('qhdr-title').textContent='模拟考试';
+  document.getElementById('exam-dots-wrap').style.display='block';
+  document.getElementById('exam-nav').style.display='flex';
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('qhdr-timer').style.display='block';
+  document.getElementById('qview').style.display='flex';
+  updTimer();renderEQ();
+}
+
+function updTimer(){
+  const m=String(Math.floor(ESec/60)).padStart(2,'0'),s=String(ESec%60).padStart(2,'0');
+  const el=document.getElementById('qhdr-timer');
+  el.textContent=`⏱ ${m}:${s}`;el.classList.toggle('warn',ESec<120);
+  document.getElementById('qhdr-sub').textContent=`已答${Object.keys(EA).length}/30`;
+}
+
+function renderEQ(){
+  const q=EQ[EI];if(!q)return;
+  const img=q.immagine?`<div class="qimg-wrap"><img src="${IMGB}${q.immagine}" onerror="this.style.display='none'" loading="lazy"></div>`:'';
+  const zh=TR[q.id];const ans=EA[q.id];
+  const prog=Math.round((EI+1)/30*100);
+  document.getElementById('qprog-fill').style.width=prog+'%';
+
+  document.getElementById('qbody').innerHTML=`
+    <div class="qcard">
+      <div class="qnum">${q.argomento||q.categoria||q.category||'一般'}</div>
+      ${img}
+      <div class="q-it">${q.testo||q.domanda||q.text||''}</div>
+      <div class="q-zh-row">
+        <div class="q-zh" id="qzh">${zh?zh:'<span style="color:var(--muted);font-size:.78rem">点击翻译</span>'}</div>
+        <button class="btn-tl" onclick="doExamTr(${q.id})">🤖 翻译</button>
+      </div>
+    </div>
+    <div class="vf-row">
+      <button class="vfb ${ans==='V'?'sel-v':''}" onclick="examAns('V')">
+        <span style="font-size:1.4rem">✓</span><span>VERO</span><span class="vf-label">正确</span>
+      </button>
+      <button class="vfb ${ans==='F'?'sel-f':''}" onclick="examAns('F')">
+        <span style="font-size:1.4rem">✗</span><span>FALSO</span><span class="vf-label">错误</span>
+      </button>
+    </div>
+  `;
+
+  const dots=document.getElementById('exam-dots');
+  dots.innerHTML=EQ.map((qq,i)=>`<div class="edot ${EA[qq.id]?'ans':''} ${i===EI?'cur':''}" onclick="examNav2(${i})">${i+1}</div>`).join('');
+
+  document.getElementById('btn-prev').disabled=EI===0;
+  document.getElementById('exam-nav-right').innerHTML=EI<29
+    ?`<button class="btn-nxtq" onclick="examNav(1)">下一题 →</button>`
+    :`<button class="btn-sub" onclick="confirmSub()">提交答卷</button>`;
+}
+
+function examAns(v){EA[EQ[EI].id]=v;renderEQ();}
+function examNav(d){EI=Math.max(0,Math.min(29,EI+d));renderEQ();}
+function examNav2(i){EI=i;renderEQ();}
+
+async function doExamTr(id){
+  const q=AQ.find(x=>x.id===id);if(!q)return;
+  const el=document.getElementById('qzh');if(!el)return;
+  if(TR[id]){el.textContent=TR[id];return;}
+  el.innerHTML='<span style="color:var(--muted)">翻译中…</span>';
+  try{const r=await callC('翻译成中文（25字内），只输出中文：'+(q.testo||q.domanda||q.text||''),80);saveTR(id,r.trim());el.textContent=r.trim();}
+  catch(e){el.textContent='翻译失败';}
+}
+
+function confirmSub(){const u=30-Object.keys(EA).length;if(u>0&&!confirm(`还有${u}题未回答，确定提交？`))return;clearInterval(ET);ET=null;submitExam();}
+
+function submitExam(){
+  ED=true;let err=0;
+  EQ.forEach(q=>{const c=CA(q)?'V':'F';if((EA[q.id]||null)!==c){err++;WR.add(q.id);}else WR.delete(q.id);});
+  const passed=err<=3;STATS.exams++;if(passed)STATS.passed++;saveST();saveW();
+  document.getElementById('qhdr-timer').style.display='none';
+  document.getElementById('exam-dots-wrap').style.display='none';
+  document.getElementById('exam-nav').style.display='none';
+  document.getElementById('qprog-fill').style.width='100%';
+
+  let det=[];EQ.forEach(q=>{const c=CA(q)?'V':'F';const g=EA[q.id]||null;det.push({q,c,g,ok:g===c});});
+  document.getElementById('qhdr-sub').textContent=passed?'通过！':'未通过';
+
+  document.getElementById('qbody').innerHTML=`
+    <div class="res-page" style="padding:0 0 20px">
+      <div class="res-banner ${passed?'pass':'fail'}">
+        <div class="res-emoji">${passed?'🎉':'😞'}</div>
+        <div class="res-title">${passed?'PROMOSSO!':'BOCCIATO'}</div>
+        <div class="res-sub">${passed?'恭喜通过考试！':`错误${err}题，需≤3题才能通过`}</div>
+      </div>
+      <div class="res-nums">
+        <div class="rn-card"><div class="rn-n" style="color:var(--teal)">${30-err}</div><div class="rn-l">正确</div></div>
+        <div class="rn-card"><div class="rn-n" style="color:${err>3?'var(--red)':'var(--text)'}">${err}</div><div class="rn-l">错误</div></div>
+        <div class="rn-card"><div class="rn-n" style="color:var(--blue)">${STATS.passed}/${STATS.exams}</div><div class="rn-l">历史通过</div></div>
+      </div>
+      ${err>0?`<div class="rev-title">错题回顾 (${err}题)</div>${det.filter(d=>!d.ok).map(d=>`<div class="rev-item"><div class="rev-q">${d.q.testo||d.q.domanda||d.q.text||''}</div><div class="rev-tags">${d.g?`<div class="rtag w">你：${d.g}</div>`:'<div class="rtag w">未作答</div>'}<div class="rtag c">正确：${d.c}</div></div></div>`).join('')}`:'<div style="text-align:center;padding:16px;color:var(--teal);font-size:.9rem">🎯 全部答对，完美！</div>'}
+      <div style="height:16px"></div>
+      <button class="btn-again" onclick="startExam()">再来一次</button>
+      <button class="btn-home" onclick="exitQ()">返回主页</button>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  WRONG
+// ═══════════════════════════════════════════════
+function renderWrong(){
+  const el=document.getElementById('wrong-list');if(!el)return;
+  document.getElementById('wrong-hdr-sub').textContent=WR.size>0?`${WR.size}题待复习 · 精准提分`:'全部掌握 · 继续保持';
+  if(!WR.size){el.innerHTML=`<div class="wrong-empty"><div class="we-ic">✅</div><div class="we-t">错题本为空</div><div class="we-s">继续练习，错题自动记录。<br>做对后自动从错题本移除。</div></div>`;return;}
+  const wqs=AQ.filter(q=>WR.has(q.id));
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-size:.92rem;font-weight:700">${WR.size}道错题</div><button onclick="startWrongPractice()" style="background:var(--red);color:#fff;border:none;border-radius:10px;padding:7px 14px;cursor:pointer;font-size:.78rem;font-family:'DM Sans',sans-serif;font-weight:700">开始练习</button></div>${wqs.map(q=>`<div class="wrong-item"><div class="wi-q">${TR[q.id]||(q.testo||q.domanda||q.text||'').substring(0,80)+'…'}</div><div class="wi-ans"><div class="wi-tag ${CA(q)?'t':'f'}">正确：${CA(q)?'VERO ✓':'FALSO ✗'}</div></div></div>`).join('')}<div style="height:12px"></div><button onclick="clearWrong()" style="width:100%;background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:13px;cursor:pointer;font-size:.85rem;font-family:'DM Sans',sans-serif;color:var(--muted);font-weight:500">清空错题本</button>`;
+}
+function clearWrong(){if(!confirm('确定清空全部错题？'))return;WR.clear();saveW();renderWrong();refreshHome();}
+
+// ═══════════════════════════════════════════════
+//  CHAT
+// ═══════════════════════════════════════════════
+function qc(q){const inp=document.getElementById('cinp');if(inp)inp.value=q;sendChat();}
+
+async function sendChat(){
+  const inp=document.getElementById('cinp');if(!inp)return;
+  const txt=inp.value.trim();if(!txt)return;inp.value='';
+  const ci=document.getElementById('chat-intro');if(ci)ci.style.display='none';
+  CH.push({r:'u',c:txt});addMsg('u',txt);
+  const lid='m'+Date.now();addMsg('a ld','正在思考…',lid);
+  try{
+    const r=await callC(txt,500,`你是专为中国人备考意大利B驾照的AI老师。用简洁中文回答，突出实用性，不超过180字。`,CH.slice(-8).map(h=>({role:h.r==='u'?'user':'assistant',content:h.c})));
+    const el=document.getElementById(lid);if(el){el.className='msg a';el.innerHTML=r.trim().replace(/\n/g,'<br>');}
+    CH.push({r:'a',c:r.trim()});
+  }catch(e){const el=document.getElementById(lid);if(el){el.className='msg a';el.textContent='网络错误，请重试。';}}
+  const ms=document.getElementById('chat-msgs');if(ms)ms.scrollTop=ms.scrollHeight;
+}
+
+function addMsg(cls,txt,id){
+  const ms=document.getElementById('chat-msgs');if(!ms)return;
+  const d=document.createElement('div');d.className='msg '+cls;d.textContent=txt;if(id)d.id=id;ms.appendChild(d);ms.scrollTop=ms.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════
+//  CLAUDE API
+// ═══════════════════════════════════════════════
+async function callC(um,mt=400,sys=null,hist=[]){
+  const msgs=[...hist,{role:'user',content:um}];
+  const body={model:'claude-sonnet-4-20250514',max_tokens:mt,messages:msgs};
+  if(sys)body.system=sys;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
+  const d=await r.json();const tb=d.content?.find(b=>b.type==='text');if(!tb)throw 0;return tb.text;
+}
+
+
+// ═══════════════════════════════════════════════
+//  VOCAB CARDS
+// ═══════════════════════════════════════════════
+let fcList=[];let fcIdx=0;let fcFlipped=false;
+
+function showAddWordModal(itSentence,zhSentence){
+  // Show a modal to pick specific word
+  const modalHtml=`<div id="vocab-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:20px;padding:22px;width:100%;max-width:340px">
+      <div style="font-size:.95rem;font-weight:700;margin-bottom:14px">📚 添加到单词卡</div>
+      <input type="hidden" id="vm-it" value="">
+      <input type="hidden" id="vm-zh-orig" value="">
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:6px">意大利语单词/短语</div>
+      <input id="vm-word" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.88rem;margin-bottom:10px;font-family:'DM Sans',sans-serif;outline:none" placeholder="输入要记的单词" value="">
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:6px">中文意思</div>
+      <input id="vm-meaning" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.88rem;margin-bottom:16px;font-family:'DM Sans',sans-serif;outline:none" placeholder="输入中文意思" value="">
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:10px" id="vm-ref"></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="document.getElementById('vocab-modal').remove()" style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:11px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem">取消</button>
+        <button onclick="saveVocabWord('${itSentence.replace(/'/g,"\\'")}','${zhSentence.replace(/'/g,"\\'")}');document.getElementById('vocab-modal').remove()" style="flex:2;background:linear-gradient(135deg,#9B6DD4,#7B4DB4);color:#fff;border:none;border-radius:12px;padding:11px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700">✓ 保存</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend',modalHtml);
+  // Set values via JS to avoid escaping issues
+  setTimeout(()=>{
+    const wEl=document.getElementById('vm-word');
+    const mEl=document.getElementById('vm-meaning');
+    const itEl=document.getElementById('vm-it');
+    const zhEl=document.getElementById('vm-zh-orig');
+    const refEl=document.getElementById('vm-ref');
+    if(wEl)wEl.focus();
+    if(mEl)mEl.value=zhSentence||'';
+    if(itEl)itEl.value=itSentence||'';
+    if(zhEl)zhEl.value=zhSentence||'';
+    if(refEl)refEl.textContent='原句：'+itSentence.substring(0,60)+'…';
+  },50);
+}
+
+function saveVocabWord(){
+  const word=(document.getElementById('vm-word')?.value||'').trim();
+  const meaning=(document.getElementById('vm-meaning')?.value||'').trim();
+  const itSentence=document.getElementById('vm-it')?.value||'';
+  if(!word){showToast('请输入单词！');return;}
+  VOCAB.set(word,{word,meaning,itSentence,addedAt:Date.now()});
+  saveVocab();
+  showToast('✅ 已加入单词卡！');
+  if(curTab==='vocab')renderVocab();
+}
+
+function renderVocab(){
+  const el=document.getElementById('vocab-list');if(!el)return;
+  const sub=document.getElementById('vocab-sub');
+  if(VOCAB.size===0){
+    if(sub)sub.textContent='收藏题目中的生词，随时复习';
+    el.innerHTML=`<div class="vocab-empty"><div class="ve-ic">📚</div><div style="font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:8px">单词卡为空</div><div style="font-size:.8rem;line-height:1.6">练题时点「🤖 翻译」后<br>再点「＋ 生词」即可收藏</div></div>`;
+    return;
+  }
+  if(sub)sub.textContent=VOCAB.size+'个单词 · 点击开始背诵';
+  const words=[...VOCAB.values()].sort((a,b)=>b.addedAt-a.addedAt);
+  el.innerHTML=`<button onclick="startFC()" style="width:100%;background:linear-gradient(135deg,#9B6DD4,#7B4DB4);color:#fff;border:none;border-radius:16px;padding:15px;font-size:.92rem;font-weight:700;cursor:pointer;margin-bottom:16px;font-family:'DM Sans',sans-serif;">🎴 开始背单词 (${VOCAB.size}张)</button>`+
+  words.map(v=>`<div class="vocab-item">
+    <div style="flex:1">
+      <div class="vi-word">${v.word}</div>
+      <div class="vi-meaning">${v.zh||'（无翻译）'}</div>
+    </div>
+    <button class="vi-del" onclick="delVocab('${v.word.replace(/'/g,"\\'")}')">删除</button>
+  </div>`).join('');
+}
+
+function delVocab(word){
+  VOCAB.delete(word);saveVocab();renderVocab();
+}
+
+function startFC(){
+  fcList=[...VOCAB.values()].sort(()=>Math.random()-.5);
+  fcIdx=0;fcFlipped=false;
+  if(!fcList.length){showToast('没有单词！');return;}
+  document.getElementById('fc-overlay').style.display='flex';
+  showFC();
+}
+
+function showFC(){
+  if(fcIdx>=fcList.length){
+    document.getElementById('fc-overlay').style.display='none';
+    showToast('🎉 本轮复习完成！');
+    return;
+  }
+  const v=fcList[fcIdx];
+  document.getElementById('fc-counter').textContent=`${fcIdx+1} / ${fcList.length}`;
+  document.getElementById('fc-word').textContent=v.word;
+  document.getElementById('fc-meaning').textContent=v.meaning||v.zh||v.itSentence||'';
+  const card=document.getElementById('fc-card');
+  card.classList.remove('flipped');
+  fcFlipped=false;
+}
+
+function flipFC(){
+  fcFlipped=!fcFlipped;
+  document.getElementById('fc-card').classList.toggle('flipped',fcFlipped);
+}
+
+function fcAnswer(know){
+  if(!fcFlipped){flipFC();return;}
+  if(!know){fcList.push(fcList[fcIdx]);}
+  fcIdx++;
+  showFC();
+}
+
+function closeFC(){
+  document.getElementById('fc-overlay').style.display='none';
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// ═══════════════════════════════════════════════
+//  FALLBACK
+// ═══════════════════════════════════════════════
+const FB=[
+  {id:1,testo:"Il segnale di STOP impone al conducente di fermarsi completamente prima di immettersi nella strada.",argomento:"Segnaletica verticale",risposta:true},
+  {id:2,testo:"In autostrada, in condizioni normali, la velocità massima per le autovetture è di 130 km/h.",argomento:"Velocità",risposta:true},
+  {id:3,testo:"Il limite di velocità nei centri abitati, salvo diversa segnalazione, è di 50 km/h.",argomento:"Velocità",risposta:true},
+  {id:4,testo:"Il tasso alcolemico massimo consentito per i conducenti in generale è di 0,5 g/l.",argomento:"Alcol e farmaci",risposta:true},
+  {id:5,testo:"Per i neopatentati nei primi tre anni il tasso alcolemico deve essere pari a zero.",argomento:"Alcol e farmaci",risposta:true},
+  {id:6,testo:"In un incrocio senza segnali, chi proviene da destra ha la precedenza.",argomento:"Precedenza",risposta:true},
+  {id:7,testo:"I veicoli su rotaia hanno sempre la precedenza sugli altri veicoli.",argomento:"Precedenza",risposta:true},
+  {id:8,testo:"La linea continua di mezzeria vieta il sorpasso.",argomento:"Segnaletica orizzontale",risposta:true},
+  {id:9,testo:"L'uso delle cinture di sicurezza è obbligatorio solo per i passeggeri anteriori.",argomento:"Sicurezza",risposta:false},
+  {id:10,testo:"Il semaforo giallo fisso indica che bisogna fermarsi se possibile.",argomento:"Segnaletica luminosa",risposta:true},
+  {id:11,testo:"È consentito usare il cellulare in mano durante la guida se ci si ferma al semaforo rosso.",argomento:"Norme di comportamento",risposta:false},
+  {id:12,testo:"Con nebbia fitta e visibilità inferiore a 50 m è obbligatorio usare i fendinebbia.",argomento:"Condizioni di guida",risposta:true},
+  {id:13,testo:"Il parcheggio sulle strisce pedonali è sempre vietato.",argomento:"Fermata e sosta",risposta:true},
+  {id:14,testo:"In autostrada con pioggia il limite di velocità scende a 110 km/h.",argomento:"Velocità",risposta:true},
+  {id:15,testo:"I bambini di altezza inferiore a 150 cm devono usare un seggiolino omologato.",argomento:"Trasporto di persone",risposta:true},
+  {id:16,testo:"Il numero europeo di emergenza unificato è il 112.",argomento:"Comportamento in caso di incidente",risposta:true},
+  {id:17,testo:"Il sorpasso è consentito in prossimità delle curve con scarsa visibilità.",argomento:"Sorpasso",risposta:false},
+  {id:18,testo:"I segnali di pericolo hanno forma triangolare con sfondo bianco e bordo rosso.",argomento:"Segnaletica verticale",risposta:true},
+  {id:19,testo:"La stanchezza alla guida è pericolosa quanto la guida in stato di ebbrezza.",argomento:"Norme di comportamento",risposta:true},
+  {id:20,testo:"In autostrada è obbligatorio indossare il giubbotto catarifrangente in caso di uscita dal veicolo.",argomento:"Norme di comportamento",risposta:true},
+];
+
+window.addEventListener('load',boot);
+</script>
+
+<script>
+const mn={name:"Patente B · 意驾题库",short_name:"意驾题库",start_url:".",display:"standalone",background_color:"#4A90E2",theme_color:"#4A90E2",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%234A90E2' rx='40'/><text y='128' x='96' text-anchor='middle' font-size='100'>🚗</text></svg>",sizes:"192x192",type:"image/svg+xml"}]};
+const mb=new Blob([JSON.stringify(mn)],{type:'application/json'});
+document.head.appendChild(Object.assign(document.createElement('link'),{rel:'manifest',href:URL.createObjectURL(mb)}));
+if('serviceWorker' in navigator){const sw=`const C='pv4';self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['./']).catch(()=>{}))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>{if(e.request.url.includes('api.anthropic.com'))return;e.respondWith(caches.open(C).then(async c=>{const r=await c.match(e.request);if(r)return r;try{const nr=await fetch(e.request);if(nr.ok)c.put(e.request,nr.clone());return nr;}catch{return r||new Response('',{status:503});}}));});`;navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
+</script>
+</body>
+</html>
