@@ -1,0 +1,3099 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#5B8C3E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="意驾题库">
+<title>Patente B · 意驾题库</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#5B8C3E;--blue2:#4A7A30;--blue-light:#E8F2D8;
+  --teal:#6B9E4A;--teal-bg:#E8F4D8;
+  --orange:#D4883A;--orange-bg:#FDF4E0;
+  --red:#C05050;--red-bg:#FCE8E8;
+  --indigo:#7B6EA8;--indigo-bg:#EDE8F4;
+  --dark:#2C2416;--text:#2C2416;--muted:#7A7060;
+  --bg:#FAF4E8;--card:#FFF8EC;--border:#E0D4C0;
+  --radius:12px;--shadow:0 2px 8px rgba(60,40,10,.1);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --pixel:'VT323',monospace;
+  --gold:#E8B830;--gold-dark:#B08820;
+  --wood:#8B6840;--wood-light:#C8A870;
+  --leaf:#5B8C3E;--leaf-dark:#3A6028;
+  --sky:#7BB8D8;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100%;overflow:hidden;font-size:15px}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;max-width:480px;margin:0 auto;background:var(--bg);position:relative;border-left:3px solid var(--wood-light);border-right:3px solid var(--wood-light)}
+
+/* ── Loading ── */
+#ls{position:absolute;inset:0;background:linear-gradient(160deg,#5B8C3E,#3A6028);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:100}
+.ls-ic{font-size:3.5rem;margin-bottom:4px}
+.ls-t{font-size:1.6rem;font-weight:700;color:#FFF8DC;font-family:'VT323',monospace;letter-spacing:2px}
+.ls-s{font-size:.85rem;color:rgba(255,248,220,.7);text-align:center;max-width:220px;line-height:1.5;font-family:'VT323',monospace}
+.ls-bw{width:200px;height:8px;background:rgba(0,0,0,.3);border-radius:0;overflow:hidden;border:2px solid rgba(255,248,220,.3)}
+.ls-b{height:100%;background:linear-gradient(90deg,#E8B830,#FFD700);border-radius:0;width:0;transition:width .3s}
+.ls-p{color:rgba(255,248,220,.6);font-size:.8rem;font-family:'VT323',monospace}
+
+/* ── Scroll ── */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+
+/* ── Bottom nav ── */
+.nav{background:linear-gradient(0deg,#C8A870,#D8B880);display:flex;border-top:3px solid var(--wood);padding-bottom:var(--safe-bottom);flex-shrink:0;position:relative;z-index:20}
+.nb{flex:1;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;font-family:'VT323',monospace;font-size:.8rem;color:#5A4830;font-weight:500;transition:color .2s}
+.nb.on{color:#2C5A10}
+.nb svg{width:22px;height:22px;stroke-width:2}
+.nb.on svg{stroke:#2C5A10}
+
+/* ══════════════════ HOME PAGE ══════════════════ */
+.home-header{background:linear-gradient(160deg,#6B9E4A 0%,#4A7A30 100%);padding:calc(var(--safe-top) + 20px) 20px 36px;position:relative;overflow:hidden;border-bottom:3px solid #3A6028}
+.home-header::after{content:'';position:absolute;bottom:-24px;left:0;right:0;height:48px;background:var(--bg);border-radius:24px 24px 0 0}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.avatar{width:44px;height:44px;border-radius:8px;background:rgba(255,248,220,.25);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;border:2px solid rgba(255,248,220,.4)}
+.hdr-name{font-size:1rem;font-weight:700;color:#fff;line-height:1.2}
+.hdr-sub{font-size:.72rem;color:rgba(255,255,255,.8);margin-top:2px;line-height:1.3}
+.hdr-stats{display:flex;gap:20px}
+.hs-item{flex:1}
+.hs-label{font-size:.65rem;color:rgba(255,255,255,.7);margin-bottom:3px}
+.hs-val{font-size:1.6rem;font-weight:700;color:#fff;line-height:1;display:flex;align-items:baseline;gap:4px}
+.hs-unit{font-size:.75rem;font-weight:500}
+.hs-dash{font-size:1.2rem;color:rgba(255,255,255,.5)}
+
+.home-body{padding:10px 16px calc(70px + var(--safe-bottom))}
+
+/* 2x2 card grid */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.mode-card{background:var(--card);border-radius:12px;padding:18px 16px 16px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:var(--shadow);position:relative;overflow:hidden;border:2px solid var(--border)}
+.mode-card:active{transform:scale(.96)}
+.mode-card.teal{background:#E8F0D0;border-color:#A8C878}
+.mode-card.orange{background:#FDF0D0;border-color:#D8B868}
+.mode-card.red{background:#F8E0D8;border-color:#C8A090}
+.mode-card.indigo{background:#E8E0F0;border-color:#B0A0C8}
+.mc-icon{font-size:1.6rem;margin-bottom:10px;display:block}
+.mc-icon svg{width:26px;height:26px}
+.mc-title{font-size:.92rem;font-weight:700;margin-bottom:3px}
+.mc-desc{font-size:.7rem;color:var(--muted);line-height:1.4}
+.mode-card.teal .mc-title{color:#3A6028}
+.mode-card.orange .mc-title{color:#8B6020}
+.mode-card.red .mc-title{color:#8B4040}
+.mode-card.indigo .mc-title{color:#5A4880}
+
+/* Section titles */
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sec-title{font-size:.95rem;font-weight:700;color:var(--text)}
+.sec-more{font-size:.75rem;color:var(--blue);cursor:pointer}
+
+/* Quick tools grid */
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:24px}
+.tool-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif}
+.tool-btn:active .ti{transform:scale(.9)}
+.ti{width:46px;height:46px;border-radius:8px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 1px 4px rgba(60,40,10,.1);transition:transform .15s;border:2px solid var(--border)}
+.tl{font-size:.7rem;color:var(--muted);font-weight:500;text-align:center;font-family:'VT323',monospace}
+
+/* Stats panel */
+.stats-panel{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:16px;border:2px solid var(--border)}
+.sp-row{display:flex;gap:0}
+.sp-item{flex:1;text-align:center;padding:0 8px;position:relative}
+.sp-item+.sp-item::before{content:'';position:absolute;left:0;top:10%;height:80%;width:1px;background:var(--border)}
+.sp-n{font-size:1.4rem;font-weight:700;color:var(--blue);line-height:1;font-family:'DM Sans',serif}
+.sp-l{font-size:.65rem;color:var(--muted);margin-top:4px}
+
+/* ══════════════════ STUDY PAGE ══════════════════ */
+.study-header{background:linear-gradient(160deg,#6B9E4A,#4A7A30);padding:calc(var(--safe-top)+16px) 18px 48px;position:relative;border-bottom:3px solid #3A6028}
+.study-header::after{content:'';position:absolute;bottom:-22px;left:0;right:0;height:44px;background:var(--bg);border-radius:22px 22px 0 0}
+.sh-title{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:2px}
+.sh-sub{font-size:.72rem;color:rgba(255,255,255,.75)}
+.study-body{padding:12px 16px calc(70px + var(--safe-bottom))}
+
+/* Category list */
+.cat-item{background:var(--card);border-radius:10px;padding:13px 16px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(60,40,10,.08);transition:transform .12s;border:2px solid var(--border)}
+.cat-item:active{transform:scale(.98)}
+.cat-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.cat-info{flex:1;min-width:0}
+.cat-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-meta{font-size:.68rem;color:var(--muted);margin-top:2px}
+.cat-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:5px}
+.cat-bar{height:100%;background:var(--teal);border-radius:2px;transition:width .5s}
+.cat-cnt{font-size:.72rem;font-weight:700;color:var(--blue);background:var(--blue-light);padding:2px 8px;border-radius:8px;flex-shrink:0}
+
+/* ══════════════════ QUESTION VIEW ══════════════════ */
+.qhdr{background:var(--card);padding:calc(var(--safe-top)+12px) 18px 12px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--border);flex-shrink:0;position:relative;z-index:10}
+.qhdr-back{background:var(--blue-light);border:none;color:var(--blue);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+.qhdr-info{flex:1}
+.qhdr-title{font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qhdr-sub{font-size:.65rem;color:var(--muted);margin-top:1px}
+.qhdr-timer{font-size:.9rem;font-weight:700;color:var(--blue);background:var(--blue-light);padding:5px 10px;border-radius:10px;flex-shrink:0;min-width:58px;text-align:center}
+.qhdr-timer.warn{background:#FDEEF0;color:var(--red)}
+
+.qprog-bar{height:3px;background:var(--border);flex-shrink:0}
+.qprog-fill{height:100%;background:linear-gradient(90deg,var(--gold),#FFD700);transition:width .4s}
+
+.qscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.qbody{padding:16px 16px 80px}
+
+.qcard{background:var(--card);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow);border:2px solid var(--border)}
+.qnum{font-size:.68rem;font-weight:700;color:var(--blue);background:var(--blue-light);display:inline-block;padding:3px 10px;border-radius:8px;margin-bottom:10px}
+.qimg-wrap{display:flex;justify-content:center;margin-bottom:12px}
+.qimg-wrap img{max-height:100px;border-radius:10px;object-fit:contain}
+.q-it{font-size:.72rem;color:var(--muted);font-style:italic;line-height:1.55;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.q-zh-row{display:flex;align-items:flex-start;gap:8px}
+.q-zh{font-size:.93rem;font-weight:500;line-height:1.65;flex:1}
+.btn-tl{background:var(--blue-light);border:none;color:var(--blue);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:.68rem;font-family:'DM Sans',sans-serif;font-weight:600;flex-shrink:0;white-space:nowrap;margin-top:2px}
+
+.vf-row{display:flex;gap:10px;margin-bottom:12px}
+.vfb{flex:1;padding:18px 12px;border-radius:10px;border:2.5px solid var(--border);background:var(--card);font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:4px}
+.vfb .vf-label{font-size:.62rem;font-weight:500;color:var(--muted)}
+.vfb:active{transform:scale(.97)}
+.vfb.sel-v{background:var(--teal-bg);border-color:var(--teal);color:var(--teal)}
+.vfb.sel-v .vf-label{color:var(--teal)}
+.vfb.sel-f{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.vfb.sel-f .vf-label{color:var(--red)}
+.vfb.ok-v{background:var(--teal-bg)!important;border-color:var(--teal)!important;color:var(--teal)!important}
+.vfb.ok-f{background:var(--red-bg)!important;border-color:var(--red)!important;color:var(--red)!important}
+.vfb.dim{opacity:.3}
+
+.ans-card{border-radius:16px;padding:14px;margin-bottom:12px;border:1.5px solid}
+.ans-card.right{background:#E8F8F4;border-color:#3DB89A}
+.ans-card.wrong{background:#FDEEF0;border-color:#E05C6A}
+.ans-icon{font-size:1.1rem;margin-bottom:5px}
+.ans-msg{font-size:.83rem;font-weight:600;margin-bottom:4px}
+.ans-detail{font-size:.78rem;line-height:1.5;color:#555}
+
+.ai-card{background:linear-gradient(135deg,#EDE8F4,#E0D8F0);border-radius:12px;padding:14px;margin-bottom:12px;border:2px solid #C0B0D8}
+.ai-hdr{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.ai-hdr-t{font-size:.72rem;font-weight:700;color:var(--indigo)}
+.ai-txt{font-size:.82rem;color:#2A3A7A;line-height:1.6}
+
+.act-row{display:flex;gap:8px;margin-bottom:8px}
+.btn-ai{background:#fff;border:1.5px solid #C8D4F0;color:var(--indigo);border-radius:12px;padding:12px 14px;cursor:pointer;font-size:.8rem;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;flex-shrink:0}
+.btn-nxt{flex:1;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;border-radius:10px;padding:12px;cursor:pointer;font-size:.88rem;font-family:'DM Sans',sans-serif;font-weight:700;box-shadow:0 3px 10px rgba(74,122,48,.3)}
+
+/* ══════════════════ EXAM DOTS ══════════════════ */
+.exam-dots-wrap{background:#fff;border-bottom:1px solid var(--border);padding:10px 16px;flex-shrink:0}
+.exam-dots{display:flex;flex-wrap:wrap;gap:5px}
+.edot{width:26px;height:26px;border-radius:8px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;color:var(--muted);transition:all .12s;flex-shrink:0}
+.edot.ans{background:var(--blue);border-color:var(--blue);color:#fff}
+.edot.cur{border-color:var(--orange);color:var(--orange)}
+.edot.ans.cur{background:var(--orange);border-color:var(--orange);color:#fff}
+.exam-nav-bar{background:#fff;border-top:1px solid var(--border);padding:12px 16px;padding-bottom:calc(12px + var(--safe-bottom));display:flex;justify-content:space-between;align-items:center;gap:10px;flex-shrink:0}
+.btn-prev{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:11px 20px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;color:var(--text)}
+.btn-prev:disabled{opacity:.35;cursor:not-allowed}
+.btn-sub{background:linear-gradient(135deg,#E05C6A,#C13A4A);color:#fff;border:none;border-radius:12px;padding:11px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700}
+.btn-nxtq{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;border-radius:12px;padding:11px 20px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700}
+
+/* ══════════════════ RESULTS ══════════════════ */
+.res-page{padding:20px 16px calc(70px + var(--safe-bottom))}
+.res-banner{border-radius:22px;padding:28px 20px;text-align:center;margin-bottom:20px}
+.res-banner.pass{background:linear-gradient(135deg,#E8F0D0,#C8E0A0)}
+.res-banner.fail{background:linear-gradient(135deg,#F8E0D8,#F0C8C0)}
+.res-emoji{font-size:3rem;margin-bottom:10px}
+.res-title{font-size:1.6rem;font-weight:900;margin-bottom:4px}
+.res-banner.pass .res-title{color:#3A6028}
+.res-banner.fail .res-title{color:#8B4040}
+.res-sub{font-size:.85rem;color:#555}
+.res-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.rn-card{background:var(--card);border-radius:10px;padding:14px 8px;text-align:center;box-shadow:var(--shadow);border:2px solid var(--border)}
+.rn-n{font-size:1.5rem;font-weight:700;line-height:1}
+.rn-l{font-size:.65rem;color:var(--muted);margin-top:4px}
+.rev-title{font-size:.9rem;font-weight:700;margin-bottom:12px}
+.rev-item{background:#fff;border-radius:14px;padding:13px;margin-bottom:8px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.rev-q{font-size:.8rem;line-height:1.45;margin-bottom:7px;color:var(--text)}
+.rev-tags{display:flex;gap:7px;flex-wrap:wrap}
+.rtag{font-size:.7rem;padding:3px 10px;border-radius:8px;font-weight:600}
+.rtag.c{background:#E8F8F4;color:#1E8065}
+.rtag.w{background:#FDEEF0;color:#C13A4A}
+.btn-again{display:block;width:100%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:16px;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;box-shadow:0 3px 10px rgba(74,122,48,.3)}
+.btn-home{display:block;width:100%;background:var(--card);color:var(--text);border:2px solid var(--border);padding:14px;border-radius:12px;font-size:.92rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* ══════════════════ CHAT ══════════════════ */
+.chat-hdr{background:linear-gradient(160deg,#6B9E4A,#4A7A30);padding:calc(var(--safe-top)+14px) 18px 48px;position:relative;border-bottom:3px solid #3A6028}
+.chat-hdr::after{content:'';position:absolute;bottom:-22px;left:0;right:0;height:44px;background:var(--bg);border-radius:22px 22px 0 0}
+.ch-title{font-size:1.1rem;font-weight:700;color:#fff}
+.ch-sub{font-size:.72rem;color:rgba(255,255,255,.75);margin-top:3px}
+.chat-body{display:flex;flex-direction:column;flex:1;overflow:hidden;margin-top:10px}
+.chat-msgs{flex:1;overflow-y:auto;padding:0 16px 10px}
+.chat-quick{padding:8px 16px 0;display:flex;gap:6px;flex-wrap:wrap;background:transparent;flex-shrink:0}
+.qb{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:6px 12px;font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text);white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.qb:active{background:var(--blue-light);border-color:var(--blue)}
+.chat-form{display:flex;gap:8px;padding:10px 16px;padding-bottom:calc(10px + var(--safe-bottom));background:#fff;border-top:1px solid var(--border);flex-shrink:0}
+.cinp{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:22px;padding:9px 16px;font-size:.85rem;font-family:'DM Sans',sans-serif;outline:none;color:var(--text);min-width:0}
+.cinp:focus{border-color:var(--blue);background:#fff}
+.csend{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;border-radius:10px;padding:9px 18px;cursor:pointer;font-size:.82rem;font-family:'DM Sans',sans-serif;font-weight:700;flex-shrink:0}
+.msg{max-width:85%;padding:11px 15px;border-radius:14px;font-size:.83rem;line-height:1.6;word-break:break-word;margin-bottom:8px}
+.msg.u{align-self:flex-end;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-bottom-right-radius:5px}
+.msg.a{align-self:flex-start;background:var(--card);color:var(--text);border-bottom-left-radius:5px;box-shadow:0 1px 4px rgba(60,40,10,.08);border:1px solid var(--border)}
+.msg.ld{color:var(--muted)}
+.chat-intro{text-align:center;padding:30px 20px}
+.ci-av{width:64px;height:64px;background:linear-gradient(135deg,#6B9E4A,#4A7A30);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 14px;border:3px solid #3A6028}
+.ci-t{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.ci-s{font-size:.78rem;color:var(--muted);line-height:1.6}
+
+/* ══════════════════ WRONG PAGE ══════════════════ */
+.wrong-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.we-ic{font-size:3rem;margin-bottom:12px}
+.we-t{font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:6px}
+.we-s{font-size:.8rem;line-height:1.6}
+.wrong-item{background:var(--card);border-radius:10px;padding:13px;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 4px rgba(60,40,10,.08);border-left:3px solid var(--red);border:2px solid var(--border);border-left:3px solid var(--red)}
+.wi-q{font-size:.83rem;line-height:1.45;margin-bottom:6px}
+.wi-ans{display:flex;gap:7px}
+.wi-tag{font-size:.7rem;padding:3px 9px;border-radius:8px;font-weight:600}
+.wi-tag.t{background:#E8F8F4;color:#1E8065}
+.wi-tag.f{background:#FDEEF0;color:#C13A4A}
+
+/* ══════════════════ MISC ══════════════════ */
+.sp2{display:inline-block;width:12px;height:12px;border:2px solid #C8D4F0;border-top-color:var(--indigo);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#2C2416;color:#FFF8DC;padding:9px 20px;border-radius:8px;font-size:.85rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;border:2px solid var(--gold-dark);font-family:'VT323',monospace}
+.toast.show{opacity:1}
+.divd{height:1px;background:var(--border);margin:18px 0}
+.btn-primary{display:block;width:100%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:15px;border-radius:12px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 3px 10px rgba(74,122,48,.25);text-align:center}
+.btn-primary:active{transform:scale(.98)}
+
+/* ══════════════════ VOCAB CARDS ══════════════════ */
+.vocab-hdr{background:linear-gradient(160deg,#7B6EA8,#5A4880);padding:calc(var(--safe-top)+16px) 18px 48px;position:relative;border-bottom:3px solid #4A3868}
+.vocab-hdr::after{content:'';position:absolute;bottom:-22px;left:0;right:0;height:44px;background:var(--bg);border-radius:22px 22px 0 0}
+.vh-title{font-size:1.1rem;font-weight:700;color:#fff}
+.vh-sub{font-size:.72rem;color:rgba(255,255,255,.75);margin-top:3px}
+.vocab-body{padding:12px 16px calc(70px + var(--safe-bottom))}
+.vocab-empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.ve-ic{font-size:3rem;margin-bottom:12px}
+.vocab-item{background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+.vi-word{font-size:.95rem;font-weight:700;flex:1;color:var(--dark)}
+.vi-meaning{font-size:.78rem;color:var(--muted);margin-top:2px}
+.vi-del{background:var(--red-bg);border:none;color:var(--red);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.72rem;flex-shrink:0}
+
+/* Flashcard study mode */
+.fc-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#5A4880,#3A2868);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.fc-counter{color:rgba(255,248,220,.7);font-size:.85rem;margin-bottom:20px;font-family:'VT323',monospace}
+.fc-card{background:var(--card);border-radius:16px;width:100%;max-width:340px;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;text-align:center;cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,.25);transition:transform .3s;border:3px solid var(--border)}
+.fc-card:active{transform:scale(.97)}
+.fc-word{font-size:1.8rem;font-weight:700;color:var(--dark);margin-bottom:12px}
+.fc-hint{font-size:.78rem;color:var(--muted)}
+.fc-meaning{font-size:1rem;color:var(--indigo);font-weight:600;margin-top:12px;display:none}
+.fc-card.flipped .fc-hint{display:none}
+.fc-card.flipped .fc-meaning{display:block}
+.fc-card.flipped .fc-word{color:var(--indigo)}
+.fc-btns{display:flex;gap:12px;margin-top:24px;width:100%;max-width:340px}
+.fc-btn{flex:1;padding:14px;border-radius:16px;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer}
+.fc-btn.know{background:#E8F8F4;color:#1E8065}
+.fc-btn.dontknow{background:#FDEEF0;color:#C13A4A}
+.fc-close{position:absolute;top:calc(var(--safe-top)+16px);right:20px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
+
+/* Add word button */
+.btn-addword{background:#fff;border:1.5px solid #C8D4F0;color:var(--indigo);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:.72rem;font-family:'DM Sans',sans-serif;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-top:6px}
+
+/* Explanation card */
+.exp-card{background:linear-gradient(135deg,#FDF0D0,#FDE8B8);border:2px solid #D8B060;border-radius:12px;padding:14px;margin-bottom:12px}
+.exp-hdr{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.exp-hdr-t{font-size:.72rem;font-weight:700;color:#8B5E00}
+.exp-txt{font-size:.82rem;color:#5A3A00;line-height:1.6}
+
+
+.su-item{background:#fff;border-radius:14px;padding:13px 14px;margin-bottom:7px;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 1px 8px rgba(0,0,0,.06);transition:transform .12s;border-left:4px solid var(--col,var(--blue))}
+.su-item:active{transform:scale(.98)}
+.su-left{flex:1;min-width:0}
+.su-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.su-stats{font-size:.65rem;margin-top:3px;display:flex;gap:8px}
+.su-prog{height:3px;background:var(--border);border-radius:2px;margin-top:5px;overflow:hidden}
+.su-prog-fill{height:100%;border-radius:2px;transition:width .4s}
+.su-cnt{font-size:.75rem;font-weight:700;padding:3px 9px;border-radius:8px;flex-shrink:0}
+
+
+/* ══ PIXEL GAME ══ */
+@font-face{}
+.pts-badge{position:fixed;top:calc(var(--safe-top) + 58px);right:12px;background:#E8B830;color:#2A2018;font-family:'VT323',monospace;font-size:.8rem;font-weight:700;padding:4px 10px;border:2px solid #B08820;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:25;cursor:pointer;border-radius:4px}
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+/* removed */
+.char-name{font-family:monospace;font-size:.5rem;font-weight:700;color:#fff;text-shadow:1px 1px 0 #000}
+.char-bubble{position:absolute;bottom:105%;left:50%;transform:translateX(-50%);background:#fff;border:2px solid #000;padding:4px 7px;font-size:.5rem;font-family:monospace;white-space:nowrap;color:#000;z-index:5;max-width:120px;white-space:normal;text-align:center;line-height:1.4;border-radius:0;box-shadow:2px 2px 0 #000}
+.char-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:#000}
+.stat-row{display:flex;align-items:center;gap:8px;padding:3px 16px}
+.stat-lbl{font-family:monospace;font-size:.6rem;font-weight:700;color:#aaa;width:55px;flex-shrink:0}
+.stat-bw{flex:1;height:10px;background:#1a1a2e;border:1px solid #333;overflow:hidden}
+.stat-bf{height:100%;transition:width .5s}
+.stat-val{font-family:monospace;font-size:.6rem;font-weight:700;color:#fff;width:30px;text-align:right;flex-shrink:0}
+.shop-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:flex-end}
+.shop-panel{background:#2A2018;width:100%;max-height:80vh;overflow-y:auto;border-top:3px solid #E8B830;padding-bottom:var(--safe-bottom)}
+.shop-hdr{font-family:'VT323',monospace;font-size:1rem;font-weight:700;color:#E8B830;padding:14px 16px 10px;border-bottom:2px solid #5A4830;display:flex;justify-content:space-between;align-items:center}
+.shop-close{background:none;border:2px solid #5A4830;color:#A89070;padding:4px 10px;cursor:pointer;font-family:'VT323',monospace;font-size:.75rem;font-weight:700;border-radius:4px}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
+.shop-item{background:#1A1208;border:2px solid #5A4830;padding:12px 8px;text-align:center;cursor:pointer;transition:border-color .15s;border-radius:6px}
+.shop-item:active{border-color:#E8B830}
+.shop-item.owned{border-color:#6B9E4A}
+.shop-emoji{font-size:1.8rem;display:block;margin-bottom:6px}
+.shop-iname{font-family:'VT323',monospace;font-size:.75rem;font-weight:700;color:#FFF8DC;margin-bottom:4px}
+.shop-price{font-family:'VT323',monospace;font-size:.75rem;font-weight:700;color:#E8B830}
+.shop-item.owned .shop-price{color:#6B9E4A}
+.john-btn{position:fixed;bottom:calc(var(--safe-bottom)+76px);left:12px;font-size:2rem;cursor:pointer;z-index:35;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.8));transition:transform .15s;line-height:1;width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+.john-btn:active{transform:scale(.85)}
+.john-speech{position:fixed;bottom:calc(var(--safe-bottom)+124px);left:8px;background:#FFF8DC;border:2px solid #8B6840;padding:7px 10px;font-family:'VT323',monospace;font-size:.8rem;font-weight:700;line-height:1.6;max-width:190px;color:#2A2018;z-index:35;box-shadow:0 3px 8px rgba(0,0,0,.2);animation:jsfade .3s ease;border-radius:6px}
+.john-speech::after{content:'';position:absolute;top:100%;left:16px;border:5px solid transparent;border-top-color:#8B6840}
+@keyframes jsfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.pts-pop{position:fixed;font-family:'VT323',monospace;font-size:1rem;font-weight:700;color:#E8B830;text-shadow:1px 1px 0 #2A2018;pointer-events:none;z-index:999;animation:ptsfloat 1.4s ease forwards}
+@keyframes ptsfloat{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-55px)}}
+/* removed */
+.level-bar-wrap{padding:8px 16px;background:#0d0d1a;border-bottom:2px solid #0f3460}
+.level-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.level-txt{font-family:monospace;font-size:.6rem;font-weight:700;color:#ffd700}
+.level-bw{height:8px;background:#1a1a2e;border:1px solid #333;overflow:hidden}
+.level-bf{height:100%;background:linear-gradient(90deg,#ffd700,#ff8c00);transition:width .5s}
+
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── Loading ── -->
+<div id="ls">
+  <div class="ls-ic">🚗</div>
+  <div class="ls-t">意驾题库</div>
+  <div class="ls-s" id="lm">正在加载7139道官方原题…</div>
+  <div class="ls-bw"><div class="ls-b" id="lb"></div></div>
+  <div class="ls-p" id="lp">0%</div>
+</div>
+
+<!-- ── Home Tab ── -->
+<div id="tab-home" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="scroll">
+    <div class="home-header" id="home-header">
+      <div class="hdr-top">
+        <div class="avatar">🎓</div>
+        <div>
+          <div class="hdr-name">Buonasera, 同学</div>
+          <div class="hdr-sub">搞定Quiz，也是在搞定意大利语。双倍进步！</div>
+        </div>
+      </div>
+      <div class="hdr-stats">
+        <div class="hs-item">
+          <div class="hs-label">距离考试</div>
+          <div class="hs-val"><span id="days-val">?</span><span class="hs-unit">天</span></div>
+        </div>
+        <div class="hs-item" style="text-align:right">
+          <div class="hs-label">考试通过率</div>
+          <div class="hs-val" style="justify-content:flex-end"><span id="pass-rate">--</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-body">
+      <!-- 4 mode cards -->
+      <div class="card-grid" style="margin-top:8px">
+        <div class="mode-card teal" onclick="startExam()">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#3DB89A" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="mc-title">模拟考试</div>
+          <div class="mc-desc">20 分钟 · 最多错3题</div>
+        </div>
+        <div class="mode-card orange" onclick="startRandom()">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E8973A" stroke-width="2.2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+          </div>
+          <div class="mc-title">随机练习</div>
+          <div class="mc-desc">全题库 · 带翻译和解析</div>
+        </div>
+        <div class="mode-card red" onclick="startWrongPractice()">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E05C6A" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="mc-title">错题本</div>
+          <div class="mc-desc" id="wrong-desc">查漏补缺 · 精准提分</div>
+        </div>
+        <div class="mode-card indigo" onclick="switchMain('study')">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5B7FD4" stroke-width="2.2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <div class="mc-title">章节练习</div>
+          <div class="mc-desc">25个章节 · 系统学习</div>
+        </div>
+      </div>
+
+      <!-- Quick tools -->
+      <div class="sec-hdr">
+        <div class="sec-title">快捷工具</div>
+        <div class="sec-more">全部 ›</div>
+      </div>
+      <div class="tools-grid">
+        <button class="tool-btn" onclick="switchMain('chat')">
+          <div class="ti" style="background:linear-gradient(135deg,#EEF2FB,#DDE5F8)">🤖</div>
+          <div class="tl">AI助教</div>
+        </button>
+        <button class="tool-btn" onclick="startWrongPractice()">
+          <div class="ti" style="background:linear-gradient(135deg,#FFF0F2,#FFE0E5)">📚</div>
+          <div class="tl">错题练习</div>
+        </button>
+        <button class="tool-btn" onclick="startMustRight()">
+          <div class="ti" style="background:linear-gradient(135deg,#E8F8F4,#C8F0E4)">✅</div>
+          <div class="tl">必对题</div>
+        </button>
+        <button class="tool-btn" onclick="startMustWrong()">
+          <div class="ti" style="background:linear-gradient(135deg,#FFF0E8,#FFE0CC)">❌</div>
+          <div class="tl">必错题</div>
+        </button>
+        <button class="tool-btn" onclick="switchMain('vocab')">
+          <div class="ti" style="background:linear-gradient(135deg,#EEF2FB,#DDE5F8)">🔖</div>
+          <div class="tl">我的收藏</div>
+        </button>
+        <button class="tool-btn" onclick="startUnseen()">
+          <div class="ti" style="background:linear-gradient(135deg,#FFFDE8,#FFF5C0)">⭐</div>
+          <div class="tl">新题挑战</div>
+        </button>
+        <button class="tool-btn" onclick="showStatsDetail()">
+          <div class="ti" style="background:linear-gradient(135deg,#E8F8F4,#C8F0E4)">📊</div>
+          <div class="tl">学习透视</div>
+        </button>
+        <button class="tool-btn" onclick="showToast('历史记录开发中')">
+          <div class="ti" style="background:linear-gradient(135deg,#F4F4F8,#E8E8F0)">🕐</div>
+          <div class="tl">做题历史</div>
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="sec-hdr">
+        <div class="sec-title">学习数据</div>
+        <div class="sec-more" onclick="showStatsDetail()">详情 ›</div>
+      </div>
+      <div class="stats-panel">
+        <div class="sp-row" id="sp-row"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Study Tab ── -->
+<div id="tab-study" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="study-header">
+    <div class="sh-title">理论学习</div>
+    <div class="sh-sub" id="study-sub">25个章节 · 系统备考</div>
+  </div>
+  <div class="scroll" style="margin-top:22px">
+    <div class="page" style="padding:16px 16px calc(70px + var(--safe-bottom))" id="cat-list"></div>
+  </div>
+</div>
+
+<!-- ── Question View (overlay) ── -->
+<!-- ── Sub-unit list overlay ── -->
+<div id="subview" style="display:none;flex-direction:column;height:100%;overflow:hidden;position:absolute;inset:0;background:var(--bg);z-index:40">
+  <div style="background:var(--dark);padding:calc(var(--safe-top)+12px) 16px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <button onclick="closeSubView()" style="background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">‹</button>
+    <div style="flex:1">
+      <div id="subview-title" style="font-size:.9rem;font-weight:700;color:#fff"></div>
+      <div id="subview-sub" style="font-size:.65rem;color:#888;margin-top:1px"></div>
+    </div>
+    <button id="subview-all-btn" style="background:var(--blue);border:none;color:#fff;padding:7px 14px;border-radius:10px;cursor:pointer;font-size:.75rem;font-weight:700;font-family:'DM Sans',sans-serif;flex-shrink:0">全部 ▶</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px 80px" id="subview-list"></div>
+</div>
+
+<div id="qview" style="display:none;flex-direction:column;height:100%;overflow:hidden;position:absolute;inset:0;background:var(--bg);z-index:50">
+  <div class="qhdr" id="qhdr">
+    <button class="qhdr-back" onclick="exitQ()">‹</button>
+    <div class="qhdr-info">
+      <div class="qhdr-title" id="qhdr-title">练习</div>
+      <div class="qhdr-sub" id="qhdr-sub">--</div>
+    </div>
+    <div class="qhdr-timer" id="qhdr-timer" style="display:none"></div>
+  </div>
+  <div class="qprog-bar"><div class="qprog-fill" id="qprog-fill" style="width:0%"></div></div>
+
+  <!-- Exam dots (only for exam) -->
+  <div id="exam-dots-wrap" style="display:none" class="exam-dots-wrap">
+    <div class="exam-dots" id="exam-dots"></div>
+  </div>
+
+  <div class="qscroll" id="qscroll">
+    <div class="qbody" id="qbody"></div>
+  </div>
+
+  <!-- Practice bottom -->
+  <div id="prac-bottom" style="display:none;background:#fff;border-top:1px solid var(--border);padding:12px 16px;padding-bottom:calc(12px + var(--safe-bottom))">
+    <div class="act-row">
+      <button class="btn-ai" id="btn-ai-exp" onclick="doAiExplain()">📖 查看解析</button>
+      <button class="btn-nxt" id="btn-nxt" onclick="nextQ()">下一题 →</button>
+    </div>
+  </div>
+
+  <!-- Exam nav -->
+  <div id="exam-nav" class="exam-nav-bar" style="display:none">
+    <button class="btn-prev" id="btn-prev" onclick="examNav(-1)">← 上一题</button>
+    <div id="exam-nav-right"></div>
+  </div>
+</div>
+  <!-- John avatar button (shown during practice) -->
+  <div class="john-btn" id="john-avatar-btn" style="display:none" onclick="johnPracticeSpeak()">🕵️</div>
+  <div id="john-practice-speech" style="display:none" class="john-speech"></div>
+
+<!-- ── Chat Tab ── -->
+<div id="tab-chat" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="chat-hdr">
+    <div class="ch-title">👨‍🏫 AI助教</div>
+    <div class="ch-sub">随时用中文问我意大利交通法规问题</div>
+  </div>
+  <div class="chat-body">
+    <div class="chat-msgs" id="chat-msgs" style="display:flex;flex-direction:column">
+      <div class="chat-intro" id="chat-intro">
+        <div class="ci-av">🤖</div>
+        <div class="ci-t">意驾AI老师</div>
+        <div class="ci-s">你好！我专为中国人备考意大利B驾照而设计。<br>用中文问我任何交通规则问题吧！</div>
+      </div>
+    </div>
+    <div class="chat-quick" id="chat-quick">
+      <div class="qb" onclick="qc('城区默认限速是多少？')">城区限速</div>
+      <div class="qb" onclick="qc('STOP与让行标志区别？')">STOP vs 让行</div>
+      <div class="qb" onclick="qc('新驾照前三年的特殊限制？')">新手限制</div>
+      <div class="qb" onclick="qc('哪些情况绝对禁止超车？')">禁止超车</div>
+      <div class="qb" onclick="qc('酒驾法律后果？')">酒驾处罚</div>
+      <div class="qb" onclick="qc('考试最容易错的陷阱题有哪些？')">考试陷阱</div>
+    </div>
+    <div class="chat-form">
+      <input class="cinp" id="cinp" placeholder="用中文问老师…" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()">
+      <button class="csend" onclick="sendChat()">发送</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── My Tab (错题) ── -->
+<div id="tab-my" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+  <div class="study-header">
+    <div class="sh-title">错题本</div>
+    <div class="sh-sub" id="wrong-hdr-sub">专攻薄弱，精准提分</div>
+  </div>
+  <div class="scroll" style="margin-top:22px">
+    <div class="page" style="padding:16px 16px calc(70px + var(--safe-bottom))" id="wrong-list"></div>
+  </div>
+</div>
+
+<!-- ── Bottom Nav ── -->
+<nav class="nav" id="nav">
+  <button class="nb on" id="nb-home" onclick="switchMain('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    主页
+  </button>
+  <button class="nb" id="nb-room" onclick="switchMain('room')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    房间
+  </button>
+  <button class="nb" id="nb-study" onclick="switchMain('study')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+    理论学习
+  </button>
+  <button class="nb" id="nb-chat" onclick="switchMain('chat')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    AI老师
+  </button>
+  <button class="nb" id="nb-my" onclick="switchMain('my')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    我的
+  </button>
+</nav>
+
+
+  <!-- ── Vocab Tab ── -->
+  <div id="tab-vocab" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+    <div class="vocab-hdr">
+      <div class="vh-title">📚 单词卡</div>
+      <div class="vh-sub" id="vocab-sub">收藏题目中的生词，随时复习</div>
+    </div>
+    <div class="scroll" style="margin-top:22px">
+      <div class="vocab-body" id="vocab-list"></div>
+    </div>
+  </div>
+  <!-- Flashcard overlay -->
+  <div id="fc-overlay" class="fc-overlay" style="display:none">
+    <button class="fc-close" onclick="closeFC()">✕</button>
+    <div class="fc-counter" id="fc-counter"></div>
+    <div class="fc-card" id="fc-card" onclick="flipFC()">
+      <div class="fc-word" id="fc-word"></div>
+      <div class="fc-hint">点击翻转查看中文</div>
+      <div class="fc-meaning" id="fc-meaning"></div>
+    </div>
+    <div class="fc-btns">
+      <button class="fc-btn dontknow" onclick="fcAnswer(false)">还不会 😅</button>
+      <button class="fc-btn know" onclick="fcAnswer(true)">已掌握 ✓</button>
+    </div>
+  </div>
+
+
+  <!-- ── Room Tab ── -->
+  <div id="tab-room" style="display:none;flex-direction:column;height:100%;overflow:hidden;background:#2A2018">
+    <!-- Header -->
+    <div style="background:linear-gradient(180deg,#3A2818,#2A2018);padding:calc(var(--safe-top)+10px) 14px 10px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #5A4830">
+      <div>
+        <div style="font-family:'VT323',monospace;font-size:1.1rem;font-weight:700;color:#E8B830;letter-spacing:1px">🏠 Rainie & John</div>
+        <div style="font-family:'VT323',monospace;font-size:.85rem;color:#A89070;margin-top:2px">Lv.<span id="room-lv">1</span> · 🪙<span id="room-pts-txt">0</span></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="showNeeds('rainie')" style="background:#4A2828;border:2px solid #8B4040;color:#FFB0B0;padding:7px 11px;font-family:'VT323',monospace;font-size:1rem;cursor:pointer;border-radius:6px">🎀</button>
+        <button onclick="showNeeds('john')" style="background:#282848;border:2px solid #4040A0;color:#B0B0FF;padding:7px 11px;font-family:'VT323',monospace;font-size:1rem;cursor:pointer;border-radius:6px">🎸</button>
+        <button onclick="openShop()" style="background:#4A3810;border:2px solid #8B6820;color:#E8B830;padding:7px 12px;font-family:'VT323',monospace;font-size:1rem;font-weight:700;cursor:pointer;border-radius:6px">🏪</button>
+      </div>
+    </div>
+    <!-- Level bar -->
+    <div style="padding:6px 14px;background:#221A10;flex-shrink:0;border-bottom:2px solid #5A4830">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-family:'VT323',monospace;font-size:.9rem;color:#E8B830" id="level-txt">Lv.1 初学者</span>
+        <span style="font-family:'VT323',monospace;font-size:.85rem;color:#A89070" id="xp-txt">0/100 XP</span>
+      </div>
+      <div style="height:10px;background:#1A1208;border:2px solid #5A4830;border-radius:4px;overflow:hidden">
+        <div style="height:100%;background:linear-gradient(90deg,#E8B830,#FFD700);transition:width .5s;border-radius:2px" id="level-bf"></div>
+      </div>
+    </div>
+    <!-- Canvas -->
+    <div style="flex:1;position:relative;overflow:hidden;background:#2A2018;min-height:0">
+      <canvas id="room-canvas" style="width:100%;height:100%;display:block;image-rendering:pixelated;cursor:pointer"></canvas>
+      <!-- Needs panel overlay -->
+      <div id="needs-panel" style="display:none;position:absolute;left:10px;top:10px;right:10px;background:rgba(42,32,24,0.97);border:3px solid #E8B830;padding:14px;z-index:50;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.5)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div id="needs-title" style="font-family:'VT323',monospace;font-size:1.1rem;color:#E8B830;font-weight:700"></div>
+          <button onclick="hideNeeds()" style="background:#3A2818;border:2px solid #5A4830;color:#A89070;padding:4px 10px;cursor:pointer;font-family:'VT323',monospace;font-size:.9rem;border-radius:6px">✕</button>
+        </div>
+        <div id="needs-bars"></div>
+      </div>
+    </div>
+    <!-- Dialogue box -->
+    <div id="dialogue-box" style="flex-shrink:0;min-height:88px;background:#1A1208;border-top:3px solid #E8B830;padding:14px 18px;display:flex;flex-direction:column;justify-content:center">
+      <div id="dialogue-speaker" style="font-family:'VT323',monospace;font-size:1.15rem;font-weight:700;color:#E8B830;margin-bottom:5px">🎸 John</div>
+      <div id="dialogue-text" style="font-size:1.15rem;color:#FFF8DC;line-height:1.5;font-family:'VT323',monospace">点击角色或按「💬 问John」和我说话吧~</div>
+    </div>
+    <!-- Bottom buttons -->
+    <div style="display:flex;gap:8px;padding:10px 14px;background:#2A2018;flex-shrink:0;padding-bottom:calc(10px + var(--safe-bottom));border-top:2px solid #5A4830">
+      <button onclick="switchMain('study')" style="flex:1;padding:12px 6px;background:linear-gradient(180deg,#6B9E4A,#4A7A30);border:2px solid #3A6028;color:#FFF8DC;font-family:'VT323',monospace;font-size:1rem;font-weight:700;cursor:pointer;border-radius:8px">📚 刷题</button>
+      <button onclick="rainieAskJohn()" style="flex:1;padding:12px 6px;background:linear-gradient(180deg,#7B6EA8,#5A4880);border:2px solid #4A3868;color:#FFF8DC;font-family:'VT323',monospace;font-size:1rem;font-weight:700;cursor:pointer;border-radius:8px">💬 问John</button>
+      <button onclick="enterPlacementMode()" style="flex:1;padding:12px 6px;background:linear-gradient(180deg,#C8883A,#A06828);border:2px solid #885818;color:#FFF8DC;font-family:'VT323',monospace;font-size:1rem;font-weight:700;cursor:pointer;border-radius:8px">🏠 布置</button>
+    </div>
+  </div>
+
+<!-- Shop overlay -->
+  <div id="shop-overlay" class="shop-overlay" style="display:none">
+    <div class="shop-panel">
+      <div class="shop-hdr">
+        <span>🏪 积分商店</span>
+        <span style="font-family:'VT323',monospace;font-size:.9rem;color:#E8B830">🪙 <span id="shop-pts-num">0</span></span>
+        <button class="shop-close" onclick="closeShop()">✕</button>
+      </div>
+      <div id="shop-grid-el" class="shop-grid"></div>
+    </div>
+  </div>
+  <div id="pts-popups"></div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════
+const CDN='https://cdn.jsdelivr.net/gh/Ed0ardo/QuizPatenteB@main';
+const IMGB=CDN+'/img_sign/';
+const JURL='./quizPatenteB2023.json';
+
+let AQ=[],TR={},WR=new Set(),SN=new Set();
+let STATS={answered:0,correct:0,exams:0,passed:0};
+let PL=[],PI=0,PS=false,PM='practice';
+let EQ=[],EA={},EI=0,ESec=0,ET=null,ED=false;
+let CH=[],chatMode=false;
+let VOCAB=new Map();
+let RAW_STRUCT={};  // raw nested {cat:{subcat:[{q,a,img}]}}
+let curTab='home';
+let aiExp={loading:false,qid:null,txt:null};
+
+// ═══════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════
+function loadS(){try{
+  TR=JSON.parse(localStorage.getItem('pt')||'{}');
+  const vs=localStorage.getItem('pvocab');
+  if(vs){const arr=JSON.parse(vs);arr.forEach(v=>VOCAB.set(v.word,v));}WR=new Set(JSON.parse(localStorage.getItem('pw')||'[]'));SN=new Set(JSON.parse(localStorage.getItem('ps')||'[]'));STATS=JSON.parse(localStorage.getItem('pst')||'{"answered":0,"correct":0,"exams":0,"passed":0}');}catch(e){}}
+function saveW(){localStorage.setItem('pw',JSON.stringify([...WR]));}
+function saveVocab(){try{localStorage.setItem('pvocab',JSON.stringify([...VOCAB.values()]));}catch(e){}}
+function saveSN(){localStorage.setItem('ps',JSON.stringify([...SN]));}
+function saveST(){localStorage.setItem('pst',JSON.stringify(STATS));}
+function saveTR(id,zh){TR[id]=zh;try{localStorage.setItem('pt',JSON.stringify(TR));}catch(e){}}
+
+// ═══════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════
+function slp(ms){return new Promise(r=>setTimeout(r,ms));}
+function conc(arr){let t=arr.reduce((s,a)=>s+a.length,0),o=new Uint8Array(t),off=0;for(const a of arr){o.set(a,off);off+=a.length;}return o;}
+
+async function boot(){
+  loadS();
+  const bar=document.getElementById('lb'),pct=document.getElementById('lp'),msg=document.getElementById('lm');
+  const cached=localStorage.getItem('pq2');
+  if(cached){try{msg.textContent='从缓存加载题库…';bar.style.width='60%';AQ=JSON.parse(cached);bar.style.width='100%';pct.textContent=AQ.length+'题';await slp(300);initApp();return;}catch(e){}}
+  try{
+    msg.textContent='下载官方题库 (~2MB)…';
+    const res=await fetch(JURL);if(!res.ok)throw 0;
+    const tot=parseInt(res.headers.get('content-length')||'0');
+    const rdr=res.body.getReader();let cks=[],rcv=0;
+    while(1){const{done,value}=await rdr.read();if(done)break;cks.push(value);rcv+=value.length;if(tot>0){const p=Math.round(rcv/tot*88);bar.style.width=p+'%';pct.textContent=p+'%';}}
+    bar.style.width='96%';msg.textContent='解析中…';
+    const txt=new TextDecoder().decode(conc(cks));
+    const raw=JSON.parse(txt);
+if(Array.isArray(raw)){AQ=raw;}
+else{
+  RAW_STRUCT=raw;
+  AQ=[];let id=1;
+  Object.entries(raw).forEach(([cat,subs])=>{
+    if(Array.isArray(subs)){
+      subs.forEach(q=>{AQ.push({id:id++,testo:q.q||'',risposta:q.a!==undefined?q.a:true,argomento:cat,sub:cat,immagine:q.img?q.img.replace('/img_sign/',''):null});});
+    }else{
+      Object.entries(subs).forEach(([sub,qs])=>{
+        if(Array.isArray(qs)){
+          qs.forEach(q=>{AQ.push({id:id++,testo:q.q||'',risposta:q.a!==undefined?q.a:true,argomento:cat,sub:sub,immagine:q.img?q.img.replace('/img_sign/',''):null});});
+        }
+      });
+    }
+  });
+}
+try{localStorage.setItem('pq2',JSON.stringify(AQ));}catch(e){}
+    bar.style.width='100%';pct.textContent=AQ.length+'题';await slp(400);initApp();
+  }catch(e){
+    msg.textContent='⚠ 使用内置题库…';bar.style.width='100%';AQ=FB;await slp(600);initApp();
+  }
+}
+
+function initApp(){
+  document.getElementById('ls').style.display='none';
+  document.getElementById('tab-home').style.display='flex';
+  switchMain('home');
+  renderCats();renderWrong();renderVocab();
+  initGameState();
+  startStatDecay();
+  setTimeout(initPtsBadge,500);
+}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function switchMain(tab){
+  ['home','study','chat','my','vocab','room'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display='none';
+    const nb=document.getElementById('nb-'+t);
+    if(nb)nb.classList.remove('on');
+  });
+  const tel=document.getElementById('tab-'+tab);
+  if(tel)tel.style.display='flex';
+  const tnb=document.getElementById('nb-'+tab);
+  if(tnb)tnb.classList.add('on');
+  curTab=tab;
+  if(tab==='home')refreshHome();
+  if(tab==='my')renderWrong();
+  if(tab==='vocab')renderVocab();
+  if(tab==='room')renderRoom();
+  else stopWalkAnimation();
+}
+
+// ═══════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════
+function refreshHome(){
+  const pct=STATS.answered?Math.round(STATS.correct/STATS.answered*100):null;
+  document.getElementById('pass-rate').textContent=pct!==null?pct+'%':'--';
+  document.getElementById('wrong-desc').textContent=WR.size>0?WR.size+'题待复习 · 精准提分':'查漏补缺 · 精准提分';
+  document.getElementById('sp-row').innerHTML=
+    `<div class="sp-item"><div class="sp-n">${AQ.length.toLocaleString()}</div><div class="sp-l">题库总数</div></div>`+
+    `<div class="sp-item"><div class="sp-n">${SN.size.toLocaleString()}</div><div class="sp-l">已练习</div></div>`+
+    `<div class="sp-item"><div class="sp-n">${WR.size}</div><div class="sp-l">错题数</div></div>`+
+    `<div class="sp-item"><div class="sp-n">${STATS.exams}</div><div class="sp-l">考试次数</div></div>`;
+}
+
+function showStatsDetail(){
+  showToast(`已练${SN.size}题 · 正确率${STATS.answered?Math.round(STATS.correct/STATS.answered*100):0}% · 考试${STATS.exams}次`);
+}
+
+// ═══════════════════════════════════════════════
+//  CATEGORIES
+// ═══════════════════════════════════════════════
+function getCats(){
+  const m={};AQ.forEach(q=>{const c=q.argomento||q.categoria||q.category||'其他';if(!m[c])m[c]={t:0,d:0};m[c].t++;if(SN.has(q.id))m[c].d++;});return m;
+}
+
+const CAT_COLORS=['#3DB89A','#E8973A','#E05C6A','#5B7FD4','#9B6DD4','#3BA8D8','#D48B3B','#4DAF7C'];
+function renderCats(){
+  const el=document.getElementById('cat-list');if(!el)return;el.innerHTML='';
+  // Build structure preserving JSON order
+  const struct={};const catOrder=[];
+  AQ.forEach(q=>{
+    const cat=q.argomento||'其他';
+    const sub=q.sub||cat;
+    if(!struct[cat]){struct[cat]={subs:{},total:0,done:0,subOrder:[]};catOrder.push(cat);}
+    if(!struct[cat].subs[sub]){struct[cat].subs[sub]={ids:[],done:0};struct[cat].subOrder.push(sub);}
+    struct[cat].subs[sub].ids.push(q.id);
+    struct[cat].total++;
+    if(SN.has(q.id))struct[cat].done++;
+  });
+  const entries=catOrder.map(c=>[c,struct[c]]).sort((a,b)=>b[1].total-a[1].total);
+  document.getElementById('study-sub').textContent=entries.length+'个章节 · 点进去按小节刷';
+
+  entries.forEach(([cat,info],i)=>{
+    const col=CAT_COLORS[i%CAT_COLORS.length];
+    const p=info.total?Math.round(info.done/info.total*100):0;
+    const corr=AQ.filter(q=>q.argomento===cat&&!WR.has(q.id)&&SN.has(q.id)).length;
+    const err=AQ.filter(q=>q.argomento===cat&&WR.has(q.id)).length;
+    const unseen=info.total-info.done;
+    const subCount=info.subOrder.length;
+
+    const d=document.createElement('div');d.className='cat-item';d.style.cursor='pointer';
+    d.onclick=()=>openSubView(cat,info,col);
+    d.innerHTML=`
+      <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${cat}</div>
+        <div style="font-size:.65rem;margin-top:3px;display:flex;gap:8px">
+          <span style="color:var(--teal)">✓${corr}</span>
+          <span style="color:var(--red)">✗${err}</span>
+          <span style="color:var(--orange)">?${unseen}未答</span>
+          <span style="color:var(--muted)">${subCount}小节</span>
+        </div>
+        <div style="height:3px;background:var(--border);border-radius:2px;margin-top:5px;overflow:hidden">
+          <div style="height:100%;width:${p}%;background:${col};border-radius:2px"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div style="font-size:.72rem;font-weight:700;color:${col};background:${col}22;padding:3px 9px;border-radius:8px">${info.total}</div>
+        <div style="color:var(--muted);font-size:.85rem">›</div>
+      </div>`;
+    el.appendChild(d);
+  });
+}
+
+function openSubView(cat,info,col){
+  // Show sub-unit list
+  const view=document.getElementById('subview');
+  document.getElementById('subview-title').textContent=cat;
+  document.getElementById('subview-sub').textContent=info.subOrder.length+'个小节 · '+info.total+'题';
+  const allIds=AQ.filter(q=>q.argomento===cat).map(q=>q.id);
+  document.getElementById('subview-all-btn').onclick=()=>startByIds(allIds,cat+'（全部）');
+  document.getElementById('subview-all-btn').style.display='block';
+
+  const list=document.getElementById('subview-list');
+  list.innerHTML='';
+
+  // Check if there are real sub-units (different from cat name)
+  const hasRealSubs=info.subOrder.some(s=>s!==cat);
+
+  if(!hasRealSubs){
+    // No sub-units - just show "start all" message
+    list.innerHTML=`<div style="text-align:center;padding:40px 20px;color:var(--muted)">
+      <div style="font-size:2rem;margin-bottom:12px">📖</div>
+      <div style="font-weight:600;color:var(--text);margin-bottom:8px">${cat}</div>
+      <div style="font-size:.82rem;margin-bottom:20px">共 ${info.total} 题，暂无子分类</div>
+      <button onclick="startByIds(${JSON.stringify(allIds)},${JSON.stringify(cat)})" style="background:var(--blue);color:#fff;border:none;padding:14px 28px;border-radius:14px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">开始刷题 ▶</button>
+    </div>`;
+  } else {
+    // Show sub-units in order
+    info.subOrder.forEach(sub=>{
+      const subInfo=info.subs[sub];
+      const subDone=subInfo.ids.filter(id=>SN.has(id)).length;
+      const subCorr=subInfo.ids.filter(id=>!WR.has(id)&&SN.has(id)).length;
+      const subErr=subInfo.ids.filter(id=>WR.has(id)).length;
+      const subUnseen=subInfo.ids.length-subDone;
+      const subP=subInfo.ids.length?Math.round(subDone/subInfo.ids.length*100):0;
+      const subLabel=sub.replace(/-/g,' ');
+
+      const d=document.createElement('div');
+      d.className='su-item';d.style.setProperty('--col',col);
+      d.onclick=()=>startByIds(subInfo.ids,subLabel);
+      d.innerHTML=`
+        <div class="su-left">
+          <div class="su-name">${subLabel}</div>
+          <div class="su-stats">
+            <span style="color:var(--teal)">✓正确${subCorr}</span>
+            <span style="color:var(--red)">✗错误${subErr}</span>
+            <span style="color:var(--orange)">?未答${subUnseen}</span>
+          </div>
+          <div class="su-prog"><div class="su-prog-fill" style="width:${subP}%;background:${col}"></div></div>
+        </div>
+        <div class="su-cnt" style="color:${col};background:${col}22">${subInfo.ids.length}</div>`;
+      list.appendChild(d);
+    });
+  }
+
+  view.style.display='flex';
+  view.style.flexDirection='column';
+}
+
+function closeSubView(){
+  document.getElementById('subview').style.display='none';
+}
+
+function startByIds(ids,title){
+  const list=ids.map(id=>AQ.find(q=>q.id===id)).filter(Boolean);
+  openQ(list,title,'practice');
+}
+
+// ═══════════════════════════════════════════════
+//  PRACTICE
+// ═══════════════════════════════════════════════
+function shuf(a){return[...a].sort(()=>Math.random()-.5);}
+function CA(q){return q.risposta===true||q.risposta==='V'||q.risposta===1;}
+
+function startRandom(){openQ(shuf(AQ),'随机练习','practice');}
+function startWrongPractice(){const l=AQ.filter(q=>WR.has(q.id));if(!l.length){showToast('错题本是空的！');return;}openQ(shuf(l),'错题复习','practice');}
+function startUnseen(){const l=AQ.filter(q=>!SN.has(q.id));if(!l.length){showToast('全部题目都练过了！');return;}openQ(shuf(l),'新题挑战','practice');}
+function startByCat(cat){
+  // Build info for this cat
+  const subs={};const subOrder=[];
+  AQ.filter(q=>q.argomento===cat||q.categoria===cat||q.category===cat).forEach(q=>{
+    const sub=q.sub||cat;
+    if(!subs[sub]){subs[sub]={ids:[],done:0};subOrder.push(sub);}
+    subs[sub].ids.push(q.id);
+  });
+  const total=AQ.filter(q=>q.argomento===cat||q.categoria===cat||q.category===cat).length;
+  const done=AQ.filter(q=>(q.argomento===cat||q.categoria===cat||q.category===cat)&&SN.has(q.id)).length;
+  const i=Object.keys(getCats()).indexOf(cat);
+  const col=CAT_COLORS[((i>=0?i:0))%CAT_COLORS.length];
+  openSubView(cat,{subs,subOrder,total,done},col);
+}
+function startMustRight(){const top=AQ.filter(q=>!WR.has(q.id)&&SN.has(q.id));if(!top.length){showToast('暂无数据');return;}openQ(shuf(top).slice(0,50),'必对题','practice');}
+function startMustWrong(){if(!WR.size){showToast('还没有错题！');return;}openQ(shuf(AQ.filter(q=>WR.has(q.id))),'必错题','practice');}
+
+function openQ(list,title,mode){
+  PL=list;PI=0;PS=false;PM=mode;aiExp={loading:false,qid:null,txt:null};
+  document.getElementById('qhdr-title').textContent=title;
+  document.getElementById('exam-dots-wrap').style.display='none';
+  document.getElementById('exam-nav').style.display='none';
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('qhdr-timer').style.display='none';
+  document.getElementById('qview').style.display='flex';
+  document.getElementById('john-avatar-btn').style.display='flex';
+  renderPQ();
+}
+
+function exitQ(){
+  document.getElementById('qview').style.display='none';
+  document.getElementById('john-avatar-btn').style.display='none';
+  const jsp=document.getElementById('john-practice-speech');if(jsp)jsp.style.display='none';
+  if(ET){clearInterval(ET);ET=null;}
+  refreshHome();renderCats();renderWrong();
+  // Keep subview open so user can pick next sub-unit
+}
+
+function renderPQ(){
+  const q=PL[PI];
+  if(!q){finishPractice();return;}
+  PS=false;aiExp={loading:false,qid:null,txt:null};
+  SN.add(q.id);saveSN();
+  const prog=Math.round((PI+1)/PL.length*100);
+  document.getElementById('qprog-fill').style.width=prog+'%';
+  document.getElementById('qhdr-sub').textContent=`${PI+1} / ${PL.length}`;
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('btn-ai-exp').style.display='block';
+
+  const zh=TR[q.id];const img=q.immagine?`<div class="qimg-wrap"><img src="${IMGB}${q.immagine}" onerror="this.style.display='none'" loading="lazy"></div>`:'';
+  document.getElementById('qbody').innerHTML=`
+    <div class="qcard">
+      <div class="qnum">${q.argomento||q.categoria||q.category||'一般'}</div>
+      ${img}
+      <div class="q-it">${q.testo||q.domanda||q.text||''}</div>
+      <div class="q-zh-row">
+        <div class="q-zh" id="qzh">${zh?zh:'<span style="color:var(--muted);font-size:.78rem">点击翻译按钮获取中文</span>'}</div>
+        <button class="btn-tl" onclick="doTranslate(${q.id})">🤖 翻译</button>
+      </div>
+    </div>
+    <div class="vf-row">
+      <button class="vfb" id="bv" onclick="ansP(true)">
+        <span style="font-size:1.4rem">✓</span>
+        <span>VERO</span>
+        <span class="vf-label">正确</span>
+      </button>
+      <button class="vfb" id="bf" onclick="ansP(false)">
+        <span style="font-size:1.4rem">✗</span>
+        <span>FALSO</span>
+        <span class="vf-label">错误</span>
+      </button>
+    </div>
+    <div id="ans-area"></div>
+  `;
+  document.getElementById('qscroll').scrollTop=0;
+}
+
+function ansP(ans){
+  if(PS)return;PS=true;
+  const q=PL[PI];const cor=CA(q);const ok=ans===cor;
+  STATS.answered++;if(ok){STATS.correct++;WR.delete(q.id);}else{WR.add(q.id);}
+  saveST();saveW();refreshHome();
+
+  const bv=document.getElementById('bv'),bf=document.getElementById('bf');
+  if(!bv||!bf)return;bv.disabled=bf.disabled=true;
+  if(cor){bv.classList.add('ok-v');bf.classList.add('dim');}else{bf.classList.add('ok-f');bv.classList.add('dim');}
+  if(ans&&!ok)bv.classList.add('ok-f');if(!ans&&!ok)bf.classList.add('ok-f');
+
+  const area=document.getElementById('ans-area');
+  area.innerHTML=`<div class="ans-card ${ok?'right':'wrong'}">
+    <div class="ans-icon">${ok?'✅':'❌'}</div>
+    <div class="ans-msg">${ok?'回答正确！':'回答错误'}</div>
+    <div class="ans-detail">正确答案：<b>${cor?'VERO（正确）':'FALSO（错误）'}</b></div>
+  </div>`;
+  document.getElementById('prac-bottom').style.display='block';
+  document.getElementById('btn-nxt').textContent=PI<PL.length-1?'下一题 →':'完成 ✓';
+  // Award points
+  if(ok){awardPoints(10,'答对');GAME.study=Math.min(100,GAME.study+2);}
+  else{awardPoints(2,'尝试');GAME.study=Math.min(100,GAME.study+1);}
+  saveGame();updateStatBars();updatePtsBadge();
+}
+
+function nextQ(){
+  PI++;aiExp={loading:false,qid:null,txt:null};
+  if(PI>=PL.length){finishPractice();return;}
+  renderPQ();
+}
+
+function finishPractice(){
+  // Bonus points for completing a section
+  const bonus=Math.max(5,Math.floor(PL.length*0.5));
+  awardPoints(bonus,'完成单元！');
+  GAME.happy=Math.min(100,GAME.happy+5);saveGame();updateStatBars();
+
+  document.getElementById('qbody').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:3.5rem;margin-bottom:16px">🎉</div><div style="font-size:1.2rem;font-weight:700;margin-bottom:8px">练习完成！</div><div style="color:var(--muted);font-size:.85rem;margin-bottom:28px">${PL.length}题全部完成</div><button class="btn-primary" onclick="exitQ()">返回主页</button></div>`;
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('qprog-fill').style.width='100%';
+}
+
+async function doTranslate(id){
+  const q=AQ.find(x=>x.id===id);if(!q)return;
+  if(TR[id]){
+    const el=document.getElementById('qzh');if(el)el.textContent=TR[id];
+    addWordBtn(id,TR[id],q);return;
+  }
+  const btn=event.currentTarget||event.target;
+  const origTxt=btn.textContent;btn.textContent='…';btn.disabled=true;
+  const txt=q.testo||q.domanda||q.text||'';
+  try{
+    // Use MyMemory free translation API (no key needed)
+    const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(txt)+'&langpair=it|zh';
+    const res=await fetch(url);
+    const data=await res.json();
+    let zh=data.responseData?.translatedText||'';
+    // Clean up common issues
+    zh=zh.replace(/MYMEMORY WARNING[^]*/i,'').trim();
+    if(!zh||zh.length<2)throw new Error('empty');
+    saveTR(id,zh);
+    const el=document.getElementById('qzh');
+    if(el){el.textContent=zh;}
+    addWordBtn(id,zh,q);
+  }catch(e){
+    const el=document.getElementById('qzh');
+    if(el)el.textContent='翻译失败，请重试';
+  }
+  btn.textContent=origTxt;btn.disabled=false;
+}
+
+function addWordBtn(id,zh,q){
+  const existing=document.getElementById('wbtn-'+id);if(existing)return;
+  const el=document.getElementById('qzh');if(!el)return;
+  const wbtn=document.createElement('button');
+  wbtn.className='btn-addword';wbtn.id='wbtn-'+id;
+  wbtn.innerHTML='＋ 生词';
+  const txt=q.testo||q.domanda||q.text||'';
+  wbtn.onclick=()=>showAddWordModal(txt,zh);
+  el.parentNode.appendChild(wbtn);
+}
+
+async function doExplain(q){
+  if(!q)q=PL[PI];if(!q)return;
+  const area=document.getElementById('ans-area');if(!area)return;
+  const cor=CA(q);
+  const existing=area.querySelector('.exp-card');if(existing){existing.remove();}
+  const card=document.createElement('div');card.className='exp-card';
+  card.innerHTML=`<div class="exp-hdr"><div class="sp2"></div><span class="exp-hdr-t">📖 解析生成中（用AI详解）…</span></div><div class="exp-txt" id="exp-txt-inner" style="color:#888;font-style:italic">正在分析题目，请稍候…</div>`;
+  area.appendChild(card);
+  const itTxt=q.testo||q.domanda||q.text||'';
+  const cat=q.argomento||q.sub||'';
+  try{
+    const t=await callC(
+`你是专业的意大利驾照(Patente B)考试老师，专门辅导中国学生。
+
+请对以下题目做**详细完整**的解析，用中文，格式如下：
+
+**✅ 正确答案：** VERO（正确）或 FALSO（错误），并一句话说明最核心原因。
+
+**📝 题目翻译：**
+[完整翻译整道题目]
+
+**🔍 关键词解析：**
+找出题目中决定答案的关键词（如 sempre/mai/solo/non/obbligatorio 等），解释该词在意大利交通法规中的含义，以及为什么它导致这道题选${cor?'VERO':'FALSO'}。
+
+**📜 相关法规：**
+引用具体的意大利交通法规条文或规定（如限速数字、具体禁止行为、距离要求等）。
+
+**⚠️ 常见错误分析：**
+解释为什么很多人会选错，陷阱在哪里。
+
+**💡 记忆技巧：**
+给出一个帮助记住这道题的实用方法。
+
+题目（意大利语）：${itTxt}
+章节：${cat}
+正确答案：${cor?'VERO（正确/真）':'FALSO（错误/假）'}
+
+请用中文详细解析，不要省略任何部分。`,
+      800
+    );
+    const hdr=card.querySelector('.exp-hdr');hdr.innerHTML='<span class="exp-hdr-t">📖 题目详解</span>';
+    const inner=card.querySelector('#exp-txt-inner');
+    if(inner){inner.style.color='';inner.style.fontStyle='';inner.innerHTML=t.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');}
+  }catch(e){
+    // Fallback to local explanation
+    const hdr=card.querySelector('.exp-hdr');hdr.innerHTML='<span class="exp-hdr-t">📖 题目解析</span>';
+    const inner=card.querySelector('#exp-txt-inner');
+    if(inner){inner.style.color='';inner.style.fontStyle='';inner.innerHTML=buildDetailedExplanation(itTxt,'',cat,cor,[]);}
+  }
+}
+
+async function doAiExplain(){doExplain(PL[PI]);}
+
+// ═══════════════════════════════════════════════
+//  EXAM
+// ═══════════════════════════════════════════════
+function startExam(){
+  EQ=shuf(AQ).slice(0,30);EA={};EI=0;ED=false;ESec=20*60;
+  clearInterval(ET);
+  ET=setInterval(()=>{ESec--;updTimer();if(ESec<=0){clearInterval(ET);ET=null;submitExam();}},1000);
+  PM='exam';PL=EQ;PI=0;PS=false;
+
+  document.getElementById('qhdr-title').textContent='模拟考试';
+  document.getElementById('exam-dots-wrap').style.display='block';
+  document.getElementById('exam-nav').style.display='flex';
+  document.getElementById('prac-bottom').style.display='none';
+  document.getElementById('qhdr-timer').style.display='block';
+  document.getElementById('qview').style.display='flex';
+  updTimer();renderEQ();
+}
+
+function updTimer(){
+  const m=String(Math.floor(ESec/60)).padStart(2,'0'),s=String(ESec%60).padStart(2,'0');
+  const el=document.getElementById('qhdr-timer');
+  el.textContent=`⏱ ${m}:${s}`;el.classList.toggle('warn',ESec<120);
+  document.getElementById('qhdr-sub').textContent=`已答${Object.keys(EA).length}/30`;
+}
+
+function renderEQ(){
+  const q=EQ[EI];if(!q)return;
+  const img=q.immagine?`<div class="qimg-wrap"><img src="${IMGB}${q.immagine}" onerror="this.style.display='none'" loading="lazy"></div>`:'';
+  const zh=TR[q.id];const ans=EA[q.id];
+  const prog=Math.round((EI+1)/30*100);
+  document.getElementById('qprog-fill').style.width=prog+'%';
+
+  document.getElementById('qbody').innerHTML=`
+    <div class="qcard">
+      <div class="qnum">${q.argomento||q.categoria||q.category||'一般'}</div>
+      ${img}
+      <div class="q-it">${q.testo||q.domanda||q.text||''}</div>
+      <div class="q-zh-row">
+        <div class="q-zh" id="qzh">${zh?zh:'<span style="color:var(--muted);font-size:.78rem">点击翻译</span>'}</div>
+        <button class="btn-tl" onclick="doExamTr(${q.id})">🤖 翻译</button>
+      </div>
+    </div>
+    <div class="vf-row">
+      <button class="vfb ${ans==='V'?'sel-v':''}" onclick="examAns('V')">
+        <span style="font-size:1.4rem">✓</span><span>VERO</span><span class="vf-label">正确</span>
+      </button>
+      <button class="vfb ${ans==='F'?'sel-f':''}" onclick="examAns('F')">
+        <span style="font-size:1.4rem">✗</span><span>FALSO</span><span class="vf-label">错误</span>
+      </button>
+    </div>
+  `;
+
+  const dots=document.getElementById('exam-dots');
+  dots.innerHTML=EQ.map((qq,i)=>`<div class="edot ${EA[qq.id]?'ans':''} ${i===EI?'cur':''}" onclick="examNav2(${i})">${i+1}</div>`).join('');
+
+  document.getElementById('btn-prev').disabled=EI===0;
+  document.getElementById('exam-nav-right').innerHTML=EI<29
+    ?`<button class="btn-nxtq" onclick="examNav(1)">下一题 →</button>`
+    :`<button class="btn-sub" onclick="confirmSub()">提交答卷</button>`;
+}
+
+function examAns(v){EA[EQ[EI].id]=v;renderEQ();}
+function examNav(d){EI=Math.max(0,Math.min(29,EI+d));renderEQ();}
+function examNav2(i){EI=i;renderEQ();}
+
+async function doExamTr(id){
+  const q=AQ.find(x=>x.id===id);if(!q)return;
+  const el=document.getElementById('qzh');if(!el)return;
+  if(TR[id]){el.textContent=TR[id];return;}
+  el.innerHTML='<span style="color:var(--muted)">翻译中…</span>';
+  try{const r=await callC('翻译成中文（25字内），只输出中文：'+(q.testo||q.domanda||q.text||''),80);saveTR(id,r.trim());el.textContent=r.trim();}
+  catch(e){el.textContent='翻译失败';}
+}
+
+function confirmSub(){const u=30-Object.keys(EA).length;if(u>0&&!confirm(`还有${u}题未回答，确定提交？`))return;clearInterval(ET);ET=null;submitExam();}
+
+function submitExam(){
+  ED=true;let err=0;
+  EQ.forEach(q=>{const c=CA(q)?'V':'F';if((EA[q.id]||null)!==c){err++;WR.add(q.id);}else WR.delete(q.id);});
+  const passed=err<=3;STATS.exams++;if(passed)STATS.passed++;saveST();saveW();
+  document.getElementById('qhdr-timer').style.display='none';
+  document.getElementById('exam-dots-wrap').style.display='none';
+  document.getElementById('exam-nav').style.display='none';
+  document.getElementById('qprog-fill').style.width='100%';
+
+  let det=[];EQ.forEach(q=>{const c=CA(q)?'V':'F';const g=EA[q.id]||null;det.push({q,c,g,ok:g===c});});
+  document.getElementById('qhdr-sub').textContent=passed?'通过！':'未通过';
+
+  document.getElementById('qbody').innerHTML=`
+    <div class="res-page" style="padding:0 0 20px">
+      <div class="res-banner ${passed?'pass':'fail'}">
+        <div class="res-emoji">${passed?'🎉':'😞'}</div>
+        <div class="res-title">${passed?'PROMOSSO!':'BOCCIATO'}</div>
+        <div class="res-sub">${passed?'恭喜通过考试！':`错误${err}题，需≤3题才能通过`}</div>
+      </div>
+      <div class="res-nums">
+        <div class="rn-card"><div class="rn-n" style="color:var(--teal)">${30-err}</div><div class="rn-l">正确</div></div>
+        <div class="rn-card"><div class="rn-n" style="color:${err>3?'var(--red)':'var(--text)'}">${err}</div><div class="rn-l">错误</div></div>
+        <div class="rn-card"><div class="rn-n" style="color:var(--blue)">${STATS.passed}/${STATS.exams}</div><div class="rn-l">历史通过</div></div>
+      </div>
+      ${err>0?`<div class="rev-title">错题回顾 (${err}题)</div>${det.filter(d=>!d.ok).map(d=>`<div class="rev-item"><div class="rev-q">${d.q.testo||d.q.domanda||d.q.text||''}</div><div class="rev-tags">${d.g?`<div class="rtag w">你：${d.g}</div>`:'<div class="rtag w">未作答</div>'}<div class="rtag c">正确：${d.c}</div></div></div>`).join('')}`:'<div style="text-align:center;padding:16px;color:var(--teal);font-size:.9rem">🎯 全部答对，完美！</div>'}
+      <div style="height:16px"></div>
+      <button class="btn-again" onclick="startExam()">再来一次</button>
+      <button class="btn-home" onclick="exitQ()">返回主页</button>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  WRONG
+// ═══════════════════════════════════════════════
+function renderWrong(){
+  const el=document.getElementById('wrong-list');if(!el)return;
+  document.getElementById('wrong-hdr-sub').textContent=WR.size>0?`${WR.size}题待复习 · 精准提分`:'全部掌握 · 继续保持';
+  if(!WR.size){el.innerHTML=`<div class="wrong-empty"><div class="we-ic">✅</div><div class="we-t">错题本为空</div><div class="we-s">继续练习，错题自动记录。<br>做对后自动从错题本移除。</div></div>`;return;}
+  const wqs=AQ.filter(q=>WR.has(q.id));
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-size:.92rem;font-weight:700">${WR.size}道错题</div><button onclick="startWrongPractice()" style="background:var(--red);color:#fff;border:none;border-radius:10px;padding:7px 14px;cursor:pointer;font-size:.78rem;font-family:'DM Sans',sans-serif;font-weight:700">开始练习</button></div>${wqs.map(q=>`<div class="wrong-item"><div class="wi-q">${TR[q.id]||(q.testo||q.domanda||q.text||'').substring(0,80)+'…'}</div><div class="wi-ans"><div class="wi-tag ${CA(q)?'t':'f'}">正确：${CA(q)?'VERO ✓':'FALSO ✗'}</div></div></div>`).join('')}<div style="height:12px"></div><button onclick="clearWrong()" style="width:100%;background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:13px;cursor:pointer;font-size:.85rem;font-family:'DM Sans',sans-serif;color:var(--muted);font-weight:500">清空错题本</button>`;
+}
+function clearWrong(){if(!confirm('确定清空全部错题？'))return;WR.clear();saveW();renderWrong();refreshHome();}
+
+// ═══════════════════════════════════════════════
+//  CHAT
+// ═══════════════════════════════════════════════
+function qc(q){const inp=document.getElementById('cinp');if(inp)inp.value=q;sendChat();}
+
+async function sendChat(){
+  const inp=document.getElementById('cinp');if(!inp)return;
+  const txt=inp.value.trim();if(!txt)return;inp.value='';
+  const ci=document.getElementById('chat-intro');if(ci)ci.style.display='none';
+  CH.push({r:'u',c:txt});addMsg('u',txt);
+  const lid='m'+Date.now();addMsg('a ld','正在思考…',lid);
+  try{
+    const r=await callC(txt,500,`你是专为中国人备考意大利B驾照的AI老师。用简洁中文回答，突出实用性，不超过180字。`,CH.slice(-8).map(h=>({role:h.r==='u'?'user':'assistant',content:h.c})));
+    const el=document.getElementById(lid);if(el){el.className='msg a';el.innerHTML=r.trim().replace(/\n/g,'<br>');}
+    CH.push({r:'a',c:r.trim()});
+  }catch(e){const el=document.getElementById(lid);if(el){el.className='msg a';el.textContent='网络错误，请重试。';}}
+  const ms=document.getElementById('chat-msgs');if(ms)ms.scrollTop=ms.scrollHeight;
+}
+
+function addMsg(cls,txt,id){
+  const ms=document.getElementById('chat-msgs');if(!ms)return;
+  const d=document.createElement('div');d.className='msg '+cls;d.textContent=txt;if(id)d.id=id;ms.appendChild(d);ms.scrollTop=ms.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════
+//  CLAUDE API
+// ═══════════════════════════════════════════════
+async function callC(um,mt=400,sys=null,hist=[]){
+  const msgs=[...hist,{role:'user',content:um}];
+  const body={model:'claude-sonnet-4-20250514',max_tokens:mt,messages:msgs};
+  if(sys)body.system=sys;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
+  const d=await r.json();const tb=d.content?.find(b=>b.type==='text');if(!tb)throw 0;return tb.text;
+}
+
+
+// ═══════════════════════════════════════════════
+//  VOCAB CARDS
+// ═══════════════════════════════════════════════
+let fcList=[];let fcIdx=0;let fcFlipped=false;
+
+function showAddWordModal(itSentence,zhSentence){
+  const existing=document.getElementById('vocab-modal');if(existing)existing.remove();
+  const modalHtml=`<div id="vocab-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:20px;padding:22px;width:100%;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+      <div style="font-size:.95rem;font-weight:700;margin-bottom:4px">📚 添加到单词卡</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:14px">输入单词，中文意思自动翻译</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:5px">意大利语单词 / 短语</div>
+      <div style="position:relative;margin-bottom:10px">
+        <input id="vm-word" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s" placeholder="输入要记的单词或短语" autocomplete="off">
+        <div id="vm-tl-spinner" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:none;font-size:.7rem;color:var(--muted)">翻译中…</div>
+      </div>
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:5px">中文意思 <span style="color:#9B6DD4">(自动填入，可修改)</span></div>
+      <textarea id="vm-meaning" rows="2" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-size:.88rem;margin-bottom:10px;font-family:'DM Sans',sans-serif;outline:none;resize:none" placeholder="自动翻译中…"></textarea>
+      <div style="font-size:.68rem;color:var(--muted);margin-bottom:14px;line-height:1.5" id="vm-ref">原句：${itSentence.substring(0,55)}…</div>
+      <input type="hidden" id="vm-it" value="">
+      <div style="display:flex;gap:8px">
+        <button onclick="document.getElementById('vocab-modal').remove()" style="flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem">取消</button>
+        <button onclick="saveVocabWord()" style="flex:2;background:linear-gradient(135deg,#9B6DD4,#7B4DB4);color:#fff;border:none;border-radius:12px;padding:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700">✓ 保存</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend',modalHtml);
+
+  // Auto-fill meaning field with pre-translated sentence
+  setTimeout(()=>{
+    const wEl=document.getElementById('vm-word');
+    const mEl=document.getElementById('vm-meaning');
+    const itEl=document.getElementById('vm-it');
+    if(mEl){if(mEl.tagName==='TEXTAREA')mEl.value=zhSentence||'';else mEl.value=zhSentence||'';}
+    if(itEl)itEl.value=itSentence||'';
+    if(wEl){
+      wEl.focus();
+      // Auto-translate as user types
+      let debounce=null;
+      wEl.addEventListener('input',()=>{
+        clearTimeout(debounce);
+        const val=wEl.value.trim();
+        if(!val){if(mEl)mEl.value='';return;}
+        const spinner=document.getElementById('vm-tl-spinner');
+        if(spinner)spinner.style.display='block';
+        debounce=setTimeout(async()=>{
+          try{
+            const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=zh-CN&dt=t&q='+encodeURIComponent(val);
+            const res=await fetch(url);const data=await res.json();
+            const zh=data[0]?.map(x=>x[0]||'').join('')||'';
+            if(zh&&mEl&&document.activeElement!==mEl)mEl.value=zh;
+          }catch(e){}
+          if(spinner)spinner.style.display='none';
+        },600);
+      });
+    }
+  },50);
+}
+
+function saveVocabWord(){
+  const word=(document.getElementById('vm-word')?.value||'').trim();
+  const meaning=(document.getElementById('vm-meaning')?.value||'').trim();
+  const itSentence=document.getElementById('vm-it')?.value||'';
+  if(!word){showToast('请输入单词！');return;}
+  VOCAB.set(word,{word,meaning,itSentence,addedAt:Date.now()});
+  saveVocab();
+  showToast('✅ 已加入单词卡！');
+  if(curTab==='vocab')renderVocab();
+}
+
+function renderVocab(){
+  const el=document.getElementById('vocab-list');if(!el)return;
+  const sub=document.getElementById('vocab-sub');
+  if(VOCAB.size===0){
+    if(sub)sub.textContent='收藏题目中的生词，随时复习';
+    el.innerHTML=`<div class="vocab-empty"><div class="ve-ic">📚</div><div style="font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:8px">单词卡为空</div><div style="font-size:.8rem;line-height:1.6">练题时点「🤖 翻译」后<br>再点「＋ 生词」即可收藏</div></div>`;
+    return;
+  }
+  if(sub)sub.textContent=VOCAB.size+'个单词 · 点击开始背诵';
+  const words=[...VOCAB.values()].sort((a,b)=>b.addedAt-a.addedAt);
+  el.innerHTML=`<button onclick="startFC()" style="width:100%;background:linear-gradient(135deg,#9B6DD4,#7B4DB4);color:#fff;border:none;border-radius:16px;padding:15px;font-size:.92rem;font-weight:700;cursor:pointer;margin-bottom:16px;font-family:'DM Sans',sans-serif;">🎴 开始背单词 (${VOCAB.size}张)</button>`+
+  words.map(v=>`<div class="vocab-item">
+    <div style="flex:1">
+      <div class="vi-word">${v.word}</div>
+      <div class="vi-meaning">${v.zh||'（无翻译）'}</div>
+    </div>
+    <button class="vi-del" onclick="delVocab('${v.word.replace(/'/g,"\\'")}')">删除</button>
+  </div>`).join('');
+}
+
+function delVocab(word){
+  VOCAB.delete(word);saveVocab();renderVocab();
+}
+
+function startFC(){
+  fcList=[...VOCAB.values()].sort(()=>Math.random()-.5);
+  fcIdx=0;fcFlipped=false;
+  if(!fcList.length){showToast('没有单词！');return;}
+  document.getElementById('fc-overlay').style.display='flex';
+  showFC();
+}
+
+function showFC(){
+  if(fcIdx>=fcList.length){
+    document.getElementById('fc-overlay').style.display='none';
+    showToast('🎉 本轮复习完成！');
+    return;
+  }
+  const v=fcList[fcIdx];
+  document.getElementById('fc-counter').textContent=`${fcIdx+1} / ${fcList.length}`;
+  document.getElementById('fc-word').textContent=v.word;
+  document.getElementById('fc-meaning').textContent=v.meaning||v.zh||v.itSentence||'';
+  const card=document.getElementById('fc-card');
+  card.classList.remove('flipped');
+  fcFlipped=false;
+}
+
+function flipFC(){
+  fcFlipped=!fcFlipped;
+  document.getElementById('fc-card').classList.toggle('flipped',fcFlipped);
+}
+
+function fcAnswer(know){
+  if(!fcFlipped){flipFC();return;}
+  if(!know){fcList.push(fcList[fcIdx]);}
+  fcIdx++;
+  showFC();
+}
+
+function closeFC(){
+  document.getElementById('fc-overlay').style.display='none';
+}
+
+
+const SPR={
+  rainie_1:'data:image/png;base64,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',
+  john_1:'data:image/png;base64,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',
+  rainie_2:'data:image/png;base64,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',
+  john_2:'data:image/png;base64,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',
+  rainie_3:'data:image/png;base64,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',
+  john_3:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADUAAACCCAYAAADmKYC9AAAFAUlEQVR4nO2cT2gdRRzHvzNvm6SatJY0UDSGRJuSUogHEfo8SPDQnHooQtBaFVutLRQ8lCZWKOrFSu1FDCr9g3/Q9CBFNLdIpeSilx4akSpWa0tBsS0iL9iX1OzPw3s7b16cfW9ndzZvd5jPaXayO/P77e/7fvNnNws4HA6Hw+FwOBQwE43sGCmSqv5W6R9Rnr1wkTU7/4vz3xqxh5toJGtY6VTscMsS6uleL+pv3LqZ0KQKSaRoZaSsdMrTOXnHSJEYYyAi9HSvBxGBc44/b95Qni9nv+6uu5JZqoF2pIhq2ThwMGtkTn6+gTa0MkyUQVZmevKYKD//6hsiqmHnr+vqBK+6JWdUADhxdjqyrSsWqSgy5UbilEH5mcBKp7RSehTCUvdHR19X1h86PinKP/52TZR7uuPbYGWkrHSqofwee/ih0JQlp2U5desiS06W7vKJsWyLvDZTYWWkrHSqofyG+vvqjmVJmJqgytLdfmA8tH3ZltkLFxu2aWWkrHQq9oT2wzdfE/Wju15Unj/z2Sll/banX1DW39vXCyICYxWz5KWNzvI+9owi6Ng0crtx12pWyi92pA5OjInyI1s2i/K7n8+I8pGxfuW1w/f7Igonv74O+AxgPo6MBRmO4/vSJnCKpwbjE9oo1MmKCGDBcU04cR2qb8UiYt+OnY+uIwYfYAUMhCwTDh0+o6zff/BJUR7sAfzqvf39r39F/anZv2Pblkh+BF6RT5LnDMSFXIhJSkxApuRnwiFA8xbvfWK76PbSlavVMcXH9OTxREYEA6489xvq7wNjFSEQOE6e/TL93aTaIGku2MsH2+CQk94uUybkJ0+LVOhm91hOUd1l+k34mkaSZh/pTOCq/PDJO8qf/pZnX06130zIzzRWOuWd3jlCe6bOG5PDK/veF5LrHXxAec7ES+9RkBTe+mC/cSly0MoHK621WABPu4NW4O2eOsdOP/V4RTLMR1QpdnUNGpnUdHZuJNWNLZV+NvR03hIpcrlhW6ToPTO0gXZPnUtFckc//lWUDz+nzoSN++IAKkv/+fnL0Se0CVbNK0BlIquroBYNvul263166Y/It6GjYxFEBJ8Bd8rtWh3JUozCqo7b4MSrG5pLKJWiX6t9yxhjKKQ7DwYAFFCQElhB69pYOtBdOqw0Whsvi+U2ECug8gPO3us7AVpO+QBAS+lYYpBMLz2C35Su3PlEcWMmdbSw0I6F26uwWG7Dkmam9bL4ahtQ2Vmi2oHWtZmWX1z4se9+yXiC1sfOSLXagDRwTuUF51Re4ONbH8zm6JsAOyOVhR0k0zYwABCbmQD2nPkmtAdTG5hx0NnctFN+QSELMjSFBwA/XbnaajuMYqX8PCDLWyjx8HZt3kBvW7amslJ+nHS2vFj15UOW9P+cmt9LsXfCfO3XTr377lmD8a1rxFWNlvcd7bVX18rltqaNhw2YUQbx1avv1B3PzzftTmCn/FptQBp4QL3kGs0DL391QtlI77YDRoy5PjMZ+re1xdHI7VgZKedUXvjfo5xGk9u1xdHYKToKYe3rYmWkrHTKAwB5R8mGBwZWRspKpzwb5LYcKyPlnMoLzqm84JzKC86pvOCcygvOqbzgnMoLzqm84JzKC86pvOCcygtWOhX7Gy/Dw8NNH9/MzanrBwbuhuozunNzdS/f5O0r3Ga+NxuGlfJLso8e5elhWPtJrm2KlZGy0qn/AOcmZXsJcQLyAAAAAElFTkSuQmCC',
+  rainie_4:'data:image/png;base64,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',
+  john_4:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAACCCAYAAAAXItswAAAEQElEQVR4nO2cPWgUQRiG39lcJWgKQSR/yB1CJIUECxMLIxZJZUCwkQQRjIgoCIJBK60sIgiCYhMRBLUUtVERMRYmYBFFDiPkTk2wEBPwD7vcWFx2Moc72d2Z2bvb/eZpbrKZ+2bf+96bnZmdPcDhcDgcDocuzHbAfD7PTd5fLpetnxMAeEkEbUbICLViE1O7qrBpYzIZJSNU2xoDAwPCrouLi3bOZh1MbUwmo2SExrKDbFeZeliXMQbOq83r2Dg1GfVF6pIaoabk4lSuh0WTgkxGndCsEaubTmrwbkLUSw2ZjJIRGnp52btrp7Dr5o0bxPHl339F+fH1CaOTOHB6XJTlNt4tfDOKK0Mmo2SEhlq3e1uXKH9fXhJl2WKmyNaXbWwTMhklIzTWgOHgvn7RA9++fFEcHxo9Hljf48CTe5OB/xscGQs83tbVIcoVkYcK3it64KgDhlizFxnGwuNXDBcrPVTMAtTEIoJ2RmVmSgvVAgeGe7sBrC59rJPSLVKv/ejtnCj/mnkmykcvXAIqHPDM17GtCBVI58M5B5iFOYAFkYCzbjAPXk6Lj3fp1DnOGANnwKs3g6JOe3t7pFiqevKA4euPP+Ccg7Pay0NdVwH9XteGO1X4K39WvgHmIdJBLAucODTMOedgjOHDpy/i+MMbE/DEp+4BqGAFHAwtsa+FsnXlcfbz2aIoJ25dzpn0uvZWr8ZaVWEtYFYv+KbEtG5Fem0eEVGw8h1dwf+9henwLxj9003kdGSKd64F9pk9R86Etq1adcz0TSZTyAjN3Tq8nwPAsfsvEtmh0rG9O7Seyory8Xw+Ly5tOqQqo7oigRQJNREJADnfsr6Fgfg2Nr0nE8XG8/Pz8p+iPov4CaQmo6aQEZob3bFVq9fVseumvsHQOlFsrAOZjJIRqmVXeXOTMvBqnVKpFPj/QqEQfnLMnxZyYxtrrQJG2dxkugHKVgwfMtb1xvsK/PzuQtNtwrCNByQ1SW4uyFg3NzFTIpBPQhl1QrOGE5o1nNCs4YRmjdx4X3VAn9QISZ53quam9YBMRskIFXaNsoDdyIcH3GOVERFCGWPG9zeaGbE4Nlf+nEgDnZ2dotzIZ9vIWFdkVPQyFpcYmwlx7+VKHZZUGmljMtb10rYxSpdcW+tGAIA/5gWSG/c2EkrWpYG4vMh2VY17Z+/eDAzSO3JS2cDU1FSscbOqjdb+IWUbUSCTUSc0awTe8f4obSOXae0fqtmbl8QJyd93tytFAzJChXXdyCgjkBHqbu1nDSc0azihWcPuM96oXekDgHK5HFqvHiuCZDJKRqi2deUplOqnLqMi21i19GIKmYw6oVnDCc0aTmjWcEKzhhOaNcgIjTWA/jn9VAze94ydFcdfT15Vvke+X6OKJaOKq4oTFTIZjSV07Sex0vf5xLJDT09P7HlnsVgMbCNuLFWcqKQvNZqQEepwpJR/oK9I//Nt9m0AAAAASUVORK5CYII=',
+};
+
+
+// ═══════════════════════════════════════════════
+//  V11 ROOM ENGINE - Modern Minimalist + NYC
+// ═══════════════════════════════════════════════
+
+let RW=14, RH=22;
+let TILE=17; // will be updated dynamically
+
+// ── Time & Weather ────────────────────────────
+function getTimeOfDay(){
+  const h=new Date().getHours();
+  if(h>=6&&h<8)  return 'dawn';
+  if(h>=8&&h<17) return 'day';
+  if(h>=17&&h<20)return 'dusk';
+  if(h>=20||h<6) return 'night';
+  return 'day';
+}
+function getRainChance(){ return new Date().getMinutes()%10<3; } // rain 30% of the time
+
+// Color schemes per time
+const SKY={
+  dawn: {sky:'#FF9F6B',sky2:'#FFD4A0',build:'#4A3050',build2:'#3A2040',star:false,ground:'#8B5E3C'},
+  day:  {sky:'#87CEEB',sky2:'#B0E0FF',build:'#2A3550',build2:'#1A2540',star:false,ground:'#6B8E6B'},
+  dusk: {sky:'#FF6B35',sky2:'#FF9560',build:'#2A2040',build2:'#1A1030',star:false,ground:'#4A5A4A'},
+  night:{sky:'#0A0A2E',sky2:'#0D0D3E',build:'#1A1A3E',build2:'#12123A',star:true, ground:'#1A2A1A'},
+};
+
+// ── Canvas ────────────────────────────────────
+let RC,CTX,animFrame=null;
+let particles=[]; // rain/stars
+
+function initRoom(){
+  RC=document.getElementById('room-canvas');
+  if(!RC)return;
+  // Dynamic sizing: fill the container
+  const container=RC.parentElement;
+  if(!container)return;
+  const cw=container.clientWidth||390;
+  const ch=container.clientHeight||600;
+  // Compute TILE from width
+  TILE=Math.floor(cw/RW);
+  // Compute RH from available height
+  RH=Math.max(14,Math.floor(ch/TILE));
+  // Set internal resolution
+  RC.width  = RW*TILE;
+  RC.height = RH*TILE;
+  // CSS: fill container, no distortion
+  RC.style.cssText='width:100%;height:100%;display:block;image-rendering:pixelated;cursor:pointer;object-fit:contain';
+  CTX=RC.getContext('2d');
+  CTX.imageSmoothingEnabled=false;
+  // Reposition chars for new grid
+  CHARS.rainie.x=3*TILE; CHARS.rainie.y=(RH-4)*TILE;
+  CHARS.rainie.tx=3*TILE; CHARS.rainie.ty=(RH-4)*TILE;
+  CHARS.john.x=7*TILE; CHARS.john.y=(RH-4)*TILE;
+  CHARS.john.tx=7*TILE; CHARS.john.ty=(RH-4)*TILE;
+  preloadCharImages(()=>{
+    if(animFrame)cancelAnimationFrame(animFrame);
+    gameLoop();
+  });
+}
+
+function gameLoop(){
+  drawScene();
+  animFrame=requestAnimationFrame(gameLoop);
+}
+
+// ── Scene drawing ─────────────────────────────
+function drawScene(){
+  if(!CTX)return;
+  CTX.clearRect(0,0,RW*TILE,RH*TILE);
+  drawRoom();
+  drawFurnitureItems();
+  drawCharacters();
+  drawParticles();
+  drawUI();
+}
+
+function drawRoom(){
+  const tod=getTimeOfDay();
+  const rain=getRainChance();
+
+  // Floor - modern light wood
+  for(let y=4;y<RH-1;y++){
+    for(let x=0;x<RW;x++){
+      // Wide plank effect
+      const plank=Math.floor(y/2)%2;
+      CTX.fillStyle=plank?'#E8D5B0':'#F0DFC0';
+      CTX.fillRect(x*TILE,y*TILE,TILE,TILE);
+      // Plank grain lines
+      CTX.fillStyle='rgba(180,140,80,0.2)';
+      CTX.fillRect(x*TILE,y*TILE,TILE,1);
+      if(x%3===0) CTX.fillRect(x*TILE,y*TILE,1,TILE);
+    }
+  }
+
+  // Back wall - clean white
+  for(let y=0;y<4;y++){
+    for(let x=0;x<RW;x++){
+      CTX.fillStyle='#F8F6F2';
+      CTX.fillRect(x*TILE,y*TILE,TILE,TILE);
+    }
+  }
+
+  // Left/right thin walls
+  for(let y=4;y<RH-1;y++){
+    CTX.fillStyle='#F0EDE8';
+    CTX.fillRect(0,y*TILE,TILE,TILE);
+    CTX.fillRect((RW-1)*TILE,y*TILE,TILE,TILE);
+    // Shadow
+    CTX.fillStyle='rgba(0,0,0,0.06)';
+    CTX.fillRect(TILE,y*TILE,3,TILE);
+    CTX.fillRect((RW-2)*TILE-3,y*TILE,3,TILE);
+  }
+
+  // Baseboard
+  CTX.fillStyle='#D4C8B8';
+  CTX.fillRect(0,4*TILE-4,RW*TILE,4);
+
+  // Bottom wall darker
+  CTX.fillStyle='#2A2018';
+  CTX.fillRect(0,(RH-1)*TILE,RW*TILE,TILE);
+
+  // Two windows on back wall (adjusted for narrower room)
+  const winW=Math.floor((RW-3)/2);
+  drawBigWindow(0,0,winW,4,tod,rain);
+  drawBigWindow(winW+2,0,winW,4,tod,rain);
+
+  // Slim column between windows
+  CTX.fillStyle='#2A2035';
+  CTX.fillRect(winW*TILE,0,2*TILE,4*TILE);
+}
+
+// Pre-computed stable window light pattern (updated every 10 seconds)
+let _windowSeed=0, _windowPattern={};
+function getStableWindowPattern(){
+  const now=Math.floor(Date.now()/10000); // changes every 10s
+  if(now!==_windowSeed){
+    _windowSeed=now;
+    _windowPattern={};
+    // Generate stable on/off pattern using deterministic hash
+    for(let i=0;i<500;i++){
+      const hash=((now*2654435761+i*2246822519)>>>0)%100;
+      _windowPattern[i]=hash>25; // ~75% lit
+    }
+  }
+  return _windowPattern;
+}
+
+function drawBigWindow(tx,ty,tw,th,tod,rain){
+  const x=tx*TILE,y=ty*TILE,w=tw*TILE,h=th*TILE;
+  const col=SKY[tod];
+
+  // Sky gradient
+  const grad=CTX.createLinearGradient(x,y,x,y+h);
+  grad.addColorStop(0,col.sky);
+  grad.addColorStop(1,col.sky2);
+  CTX.fillStyle=grad;
+  CTX.fillRect(x,y,w,h);
+
+  // Stars at night
+  if(col.star){
+    CTX.fillStyle='#FFFFFF';
+    const stars=[[x+8,y+4],[x+20,y+2],[x+35,y+8],[x+50,y+3],[x+65,y+6],[x+80,y+2],[x+95,y+9],[x+15,y+14],[x+42,y+16],[x+70,y+13],[x+88,y+17]];
+    stars.filter(s=>s[0]<x+w).forEach(([sx,sy])=>{
+      CTX.fillStyle='#FFFFD0';
+      CTX.fillRect(sx,sy,2,2);
+    });
+  }
+
+  // Moon at night
+  if(tod==='night'){
+    CTX.fillStyle='#FFFFD0';
+    CTX.beginPath();CTX.arc(x+w-20,y+16,7,0,Math.PI*2);CTX.fill();
+    CTX.fillStyle=col.sky;
+    CTX.beginPath();CTX.arc(x+w-17,y+14,6,0,Math.PI*2);CTX.fill();
+  }
+
+  // Sun at dawn/day/dusk
+  if(tod==='dawn'){
+    CTX.fillStyle='#FFD700';
+    CTX.beginPath();CTX.arc(x+20,y+h-8,8,0,Math.PI*2);CTX.fill();
+  }
+
+  // NYC skyline pixel buildings
+  const buildings=[
+    {bx:0,bw:12,bh:28,notch:false},
+    {bx:14,bw:8,bh:40,notch:true},
+    {bx:24,bw:14,bh:24,notch:false},
+    {bx:40,bw:6,bh:48,notch:false,spire:true},
+    {bx:48,bw:10,bh:32,notch:false},
+    {bx:60,bw:16,bh:22,notch:false},
+    {bx:78,bw:8,bh:38,notch:true},
+    {bx:88,bw:12,bh:26,notch:false},
+    {bx:102,bw:10,bh:44,notch:false,spire:true},
+    {bx:114,bw:14,bh:20,notch:false},
+  ];
+  buildings.forEach(b=>{
+    if(x+b.bx>x+w)return;
+    const bx=x+b.bx, by=y+h-b.bh, bw=Math.min(b.bw,x+w-bx);
+    if(bw<=0)return;
+    CTX.fillStyle=col.build;
+    CTX.fillRect(bx,by,bw,b.bh);
+    if(b.notch){
+      CTX.fillStyle=col.build2;
+      CTX.fillRect(bx+2,by-6,bw-4,8);
+    }
+    if(b.spire){
+      CTX.fillStyle=col.build;
+      CTX.fillRect(bx+bw/2-1,by-12,2,12);
+      // Antenna light
+      if(tod==='night'||tod==='dusk'){
+        CTX.fillStyle='#FF3030';
+        CTX.fillRect(bx+bw/2-1,by-13,2,2);
+      }
+    }
+    // Windows in buildings - stable pattern, no flicker
+    const winCol=tod==='night'?'rgba(255,240,150,0.7)':'rgba(200,220,240,0.3)';
+    CTX.fillStyle=winCol;
+    const wp=getStableWindowPattern();
+    let wIdx=Math.floor(b.bx*7+b.bh*3); // unique per building
+    for(let wy=by+3;wy<y+h-2;wy+=5){
+      for(let wx=bx+2;wx<bx+bw-2;wx+=5){
+        if(wx+3>bx+bw)break;
+        wIdx++;
+        if(tod==='night'&&!wp[wIdx%500])continue;
+        CTX.fillRect(wx,wy,3,3);
+      }
+    }
+  });
+
+  // Rain drops
+  if(rain&&tod!=='night'){
+    if(particles.filter(p=>p.type==='rain').length<30){
+      for(let i=0;i<5;i++){
+        particles.push({type:'rain',x:x+Math.random()*w,y:y,vx:-0.5,vy:3+Math.random()*2,life:1});
+      }
+    }
+  }
+
+  // Window frame - thin black modern
+  CTX.strokeStyle='#1A1A1A';CTX.lineWidth=2;
+  CTX.strokeRect(x,y,w,h);
+  // Vertical divider
+  CTX.beginPath();CTX.moveTo(x+w/2,y);CTX.lineTo(x+w/2,y+h);CTX.stroke();
+  // Horizontal divider
+  CTX.beginPath();CTX.moveTo(x,y+h*0.6);CTX.lineTo(x+w,y+h*0.6);CTX.stroke();
+  CTX.lineWidth=1;
+}
+
+function drawModernDoor(){} // no door
+
+// ── Furniture drawing (Modern style) ─────────────────
+// ══════════════════════════════════════════
+// 80s NYC APARTMENT FURNITURE SYSTEM
+// ══════════════════════════════════════════
+
+// Dynamic positions - loaded from save, editable in placement mode
+let FURN_POSITIONS = {};
+let placementMode = false;
+let placementItem = null;
+
+const FURN_DRAW = {
+  // ── LIVING ROOM ──────────────────────
+  sofa:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Burgundy velvet sofa - 80s style
+    ctx.fillStyle='#6B1A2A';ctx.fillRect(x,y,5*TILE,TILE);
+    ctx.fillStyle='#8B2A3A';ctx.fillRect(x,y+TILE,5*TILE,TILE);
+    ctx.fillStyle='#5B1020';ctx.fillRect(x,y,TILE/2,2*TILE);
+    ctx.fillRect(x+5*TILE-TILE/2,y,TILE/2,2*TILE);
+    ctx.fillStyle='rgba(255,200,100,0.15)';ctx.fillRect(x+4,y+4,5*TILE-8,4);
+    ctx.fillStyle='#1A0A00';ctx.fillRect(x+3,y+2*TILE-3,4,3);
+    ctx.fillRect(x+5*TILE-7,y+2*TILE-3,4,3);
+  },
+  beanbag:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#D06020';
+    ctx.beginPath();ctx.ellipse(x+TILE,y+TILE+4,TILE,TILE-2,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#E07030';
+    ctx.beginPath();ctx.ellipse(x+TILE,y+TILE,TILE-3,TILE-5,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.1)';ctx.fillRect(x+4,y+6,6,4);
+  },
+  glasstable:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+2,y+TILE,3,TILE);ctx.fillRect(x+3*TILE-5,y+TILE,3,TILE);
+    ctx.fillStyle='rgba(180,220,240,0.5)';ctx.fillRect(x,y,3*TILE,5);
+    ctx.fillStyle='rgba(255,255,255,0.3)';ctx.fillRect(x+2,y+1,3*TILE-4,2);
+    ctx.fillStyle='#C8A848';ctx.fillRect(x-1,y-1,3*TILE+2,2);
+  },
+  crttv:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // CRT TV on stand
+    ctx.fillStyle='#2A2020';ctx.fillRect(x,y+2*TILE,3*TILE,TILE);
+    ctx.fillStyle='#3A3030';ctx.fillRect(x+4,y,3*TILE-8,2*TILE);
+    ctx.fillStyle='#1A1818';ctx.fillRect(x+6,y+3,3*TILE-12,2*TILE-8);
+    // Screen glow
+    const t=Date.now()/2000;
+    ctx.fillStyle=`rgba(80,120,200,${0.3+0.1*Math.sin(t)})`;
+    ctx.fillRect(x+7,y+4,3*TILE-14,2*TILE-10);
+    // Antenna
+    ctx.fillStyle='#555';ctx.fillRect(x+TILE,y-8,2,10);ctx.fillRect(x+2*TILE-2,y-8,2,10);
+    // Knobs
+    ctx.fillStyle='#888';ctx.fillRect(x+3*TILE-10,y+5,3,3);ctx.fillRect(x+3*TILE-10,y+12,3,3);
+  },
+  recordplayer:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#3A2820';ctx.fillRect(x,y,3*TILE,2*TILE);
+    ctx.fillStyle='#4A3830';ctx.fillRect(x+2,y+2,3*TILE-4,2*TILE-4);
+    // Vinyl disc
+    ctx.fillStyle='#1A1A1A';
+    ctx.beginPath();ctx.arc(x+TILE+4,y+TILE,TILE-4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#333';
+    ctx.beginPath();ctx.arc(x+TILE+4,y+TILE,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#C8A848';
+    ctx.beginPath();ctx.arc(x+TILE+4,y+TILE,2,0,Math.PI*2);ctx.fill();
+    // Tonearm
+    const a=Date.now()/8000;
+    ctx.fillStyle='#C8C8C8';ctx.fillRect(x+2*TILE+4,y+3,2,TILE);
+  },
+  floorlamp:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Arc floor lamp - very 80s
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+4,y+3*TILE-4,10,4);
+    ctx.fillStyle='#888';ctx.fillRect(x+8,y+TILE,2,2*TILE);
+    // Arc arm
+    ctx.fillStyle='#888';ctx.fillRect(x+6,y+TILE,12,2);
+    // Shade
+    ctx.fillStyle='#F0E8D0';ctx.fillRect(x+14,y+TILE-6,10,10);
+    ctx.fillStyle='#FFF8E0';ctx.fillRect(x+15,y+TILE-5,8,8);
+    const tod=getTimeOfDay();
+    if(tod==='night'||tod==='dusk'){
+      ctx.fillStyle='rgba(255,240,150,0.3)';
+      ctx.beginPath();ctx.arc(x+19,y+TILE,18,0,Math.PI*2);ctx.fill();
+    }
+  },
+  rug:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Persian rug - rich colors
+    ctx.fillStyle='#8B2020';ctx.fillRect(x,y,5*TILE,3*TILE);
+    ctx.fillStyle='#6B1818';ctx.fillRect(x+4,y+4,5*TILE-8,3*TILE-8);
+    ctx.fillStyle='#C8A848';
+    ctx.fillRect(x+2,y+2,5*TILE-4,2);ctx.fillRect(x+2,y+3*TILE-4,5*TILE-4,2);
+    ctx.fillRect(x+2,y+2,2,3*TILE-4);ctx.fillRect(x+5*TILE-4,y+2,2,3*TILE-4);
+    ctx.fillStyle='#D4A030';
+    ctx.fillRect(x+2*TILE,y+TILE,TILE,TILE);
+  },
+  lavalamp:(ctx,fx,fy)=>{
+    const x=fx*TILE+2,y=fy*TILE;
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+2,y+2*TILE-2,8,4);
+    ctx.fillStyle='#333';ctx.fillRect(x+3,y+4,6,2*TILE-6);
+    // Lava blobs
+    const t=Date.now()/1500;
+    ctx.fillStyle='#FF4060';
+    ctx.beginPath();ctx.ellipse(x+6,y+TILE+Math.sin(t)*6,3,4+Math.sin(t)*2,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#FF6080';
+    ctx.beginPath();ctx.ellipse(x+6,y+8+Math.cos(t*0.7)*4,2,3,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+3,y+2,6,3);
+  },
+  neon:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    const t=Date.now()/500;
+    const glow=0.6+0.3*Math.sin(t);
+    // "NYC" neon sign
+    ctx.fillStyle=`rgba(255,50,100,${glow})`;ctx.font='bold 14px monospace';
+    ctx.fillText('NYC',x+2,y+14);
+    ctx.fillStyle=`rgba(255,100,150,${glow*0.4})`;
+    ctx.beginPath();ctx.arc(x+TILE+4,y+8,16,0,Math.PI*2);ctx.fill();
+  },
+  lazySofa:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#4A6848';ctx.fillRect(x,y+4,2*TILE,TILE+4);
+    ctx.fillStyle='#5A7858';ctx.fillRect(x+2,y,2*TILE-4,6);
+    ctx.fillStyle='rgba(0,0,0,0.1)';ctx.fillRect(x+4,y+8,2*TILE-8,4);
+  },
+
+  // ── BEDROOM ──────────────────────────
+  bed:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Waterbed frame - dark wood
+    ctx.fillStyle='#2A1808';ctx.fillRect(x,y,5*TILE,4*TILE);
+    // Water mattress - blue tint
+    ctx.fillStyle='#3A5070';ctx.fillRect(x+3,y+3,5*TILE-6,4*TILE-8);
+    ctx.fillStyle='#4A6080';
+    const t=Date.now()/2000;
+    ctx.fillRect(x+3,y+3+Math.sin(t)*2,5*TILE-6,2);
+    // Pillow
+    ctx.fillStyle='#F0E8D0';ctx.fillRect(x+6,y+5,5*TILE-12,10);
+    // Blanket
+    ctx.fillStyle='#8B2A3A';ctx.fillRect(x+3,y+17,5*TILE-6,4*TILE-22);
+    ctx.fillStyle='#9B3A4A';ctx.fillRect(x+3,y+17,5*TILE-6,4);
+    // Headboard
+    ctx.fillStyle='#1A1208';ctx.fillRect(x,y,5*TILE,8);
+  },
+  nightstand:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#3A2818';ctx.fillRect(x,y,2*TILE,2*TILE);
+    ctx.fillStyle='#4A3828';ctx.fillRect(x+2,y+2,2*TILE-4,TILE-2);
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+TILE-2,y+4,4,3);
+    // Alarm clock on top
+    ctx.fillStyle='#C03030';ctx.fillRect(x+4,y-6,8,6);
+    ctx.fillStyle='#FF4040';ctx.fillRect(x+5,y-5,6,4);
+  },
+  vanity:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#F0E8E0';ctx.fillRect(x,y+TILE,3*TILE,2*TILE);
+    // Mirror
+    ctx.fillStyle='#1A1A1A';ctx.fillRect(x+4,y-4,3*TILE-8,TILE+6);
+    ctx.fillStyle='#B8D0E8';ctx.fillRect(x+6,y-2,3*TILE-12,TILE+2);
+    ctx.fillStyle='rgba(255,255,255,0.3)';ctx.fillRect(x+6,y-2,6,TILE+2);
+    // Lights around mirror
+    ctx.fillStyle='#FFE880';
+    for(let i=0;i<4;i++){ctx.fillRect(x+3+i*12,y-5,3,3);ctx.fillRect(x+3+i*12,y+TILE+2,3,3);}
+    // Makeup items
+    ctx.fillStyle='#FF6080';ctx.fillRect(x+6,y+TILE+3,4,5);
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+14,y+TILE+2,3,6);
+  },
+  clothrack:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#1A1A1A';ctx.fillRect(x+6,y+4,2,3*TILE-4);
+    ctx.fillRect(x-2,y+4,18,2);
+    ctx.fillStyle='#333';ctx.fillRect(x+2,y+3*TILE-2,10,3);
+    // Hanging clothes
+    ctx.fillStyle='#4A6090';ctx.fillRect(x,y+6,5,TILE);
+    ctx.fillStyle='#8B2A3A';ctx.fillRect(x+7,y+6,5,TILE+4);
+    ctx.fillStyle='#2A5A2A';ctx.fillRect(x+3,y+8,4,TILE);
+  },
+
+  // ── KITCHEN ──────────────────────────
+  fridge:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#E8E0D0';ctx.fillRect(x,y,2*TILE,4*TILE);
+    ctx.fillStyle='#D8D0C0';ctx.fillRect(x+2,y+2,2*TILE-4,2*TILE-2);
+    ctx.fillRect(x+2,y+2*TILE+2,2*TILE-4,2*TILE-4);
+    ctx.fillStyle='#C8C0B0';ctx.fillRect(x,y+2*TILE,2*TILE,2);
+    ctx.fillStyle='#888';ctx.fillRect(x+2*TILE-5,y+TILE,3,4);ctx.fillRect(x+2*TILE-5,y+3*TILE,3,4);
+    // Magnets
+    ctx.fillStyle='#FF4040';ctx.fillRect(x+4,y+4,4,4);
+    ctx.fillStyle='#4040FF';ctx.fillRect(x+12,y+8,4,4);
+  },
+  stove:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#E8E0D0';ctx.fillRect(x,y,3*TILE,2*TILE);
+    ctx.fillStyle='#D0C8B8';ctx.fillRect(x+2,y+2,3*TILE-4,2*TILE-4);
+    // Burners
+    ctx.fillStyle='#333';
+    ctx.beginPath();ctx.arc(x+TILE,y+TILE-2,5,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(x+2*TILE,y+TILE-2,5,0,Math.PI*2);ctx.fill();
+    // Knobs
+    ctx.fillStyle='#888';
+    for(let i=0;i<4;i++) ctx.fillRect(x+4+i*10,y+2*TILE-5,4,3);
+  },
+  coffeemaker:(ctx,fx,fy)=>{
+    const x=fx*TILE+2,y=fy*TILE;
+    ctx.fillStyle='#2A2020';ctx.fillRect(x,y+4,12,TILE+4);
+    ctx.fillStyle='#3A3030';ctx.fillRect(x+1,y,10,5);
+    // Carafe
+    ctx.fillStyle='rgba(100,60,20,0.6)';ctx.fillRect(x+2,y+TILE-4,8,8);
+    ctx.fillStyle='#1A1A1A';ctx.fillRect(x+1,y+TILE-6,10,3);
+    // Steam
+    const t=Date.now()/800;
+    ctx.fillStyle=`rgba(200,200,200,${0.3+0.2*Math.sin(t)})`;
+    ctx.fillRect(x+4,y-2+Math.sin(t)*2,2,4);
+  },
+  bistrotable:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+TILE-1,y+5,2,2*TILE-5);
+    ctx.fillStyle='#F0E8D0';ctx.fillRect(x,y,2*TILE,5);
+    ctx.fillStyle='#E8E0C8';ctx.fillRect(x+2,y+1,2*TILE-4,3);
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+4,y+2*TILE-2,2*TILE-8,3);
+  },
+
+  // ── DECOR ────────────────────────────
+  rotaryphone:(ctx,fx,fy)=>{
+    const x=fx*TILE+1,y=fy*TILE+2;
+    ctx.fillStyle='#8B2020';ctx.fillRect(x,y+4,14,8);
+    ctx.fillStyle='#A03030';
+    ctx.beginPath();ctx.arc(x+7,y+8,5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#8B2020';
+    ctx.beginPath();ctx.arc(x+7,y+8,2,0,Math.PI*2);ctx.fill();
+    // Handset
+    ctx.fillStyle='#6B1010';ctx.fillRect(x+1,y,4,6);ctx.fillRect(x+9,y,4,6);
+    ctx.fillRect(x+1,y,12,3);
+  },
+  typewriter:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#2A2828';ctx.fillRect(x,y+4,2*TILE,TILE);
+    ctx.fillStyle='#3A3838';ctx.fillRect(x+2,y,2*TILE-4,6);
+    // Keys
+    ctx.fillStyle='#E8E0D0';
+    for(let r=0;r<2;r++)for(let k=0;k<5;k++) ctx.fillRect(x+3+k*6,y+7+r*5,4,3);
+    // Paper
+    ctx.fillStyle='#F8F4E8';ctx.fillRect(x+4,y-8,2*TILE-8,10);
+    ctx.fillStyle='rgba(0,0,0,0.15)';
+    for(let l=0;l<3;l++) ctx.fillRect(x+6,y-6+l*3,2*TILE-12,1);
+  },
+  globe:(ctx,fx,fy)=>{
+    const x=fx*TILE+4,y=fy*TILE;
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+3,y+TILE+2,6,6);ctx.fillRect(x+5,y+2,2,TILE);
+    ctx.fillStyle='#4080B0';
+    ctx.beginPath();ctx.arc(x+6,y+4,7,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#50A050';
+    ctx.fillRect(x+2,y+2,4,4);ctx.fillRect(x+7,y+5,3,3);
+    ctx.fillStyle='rgba(255,255,255,0.2)';ctx.fillRect(x+3,y+1,3,4);
+  },
+  poster:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Warhol-style pop art poster
+    ctx.fillStyle='#FF4080';ctx.fillRect(x,y,TILE,TILE);
+    ctx.fillStyle='#40C0FF';ctx.fillRect(x+TILE,y,TILE,TILE);
+    ctx.fillStyle='#FFD040';ctx.fillRect(x,y+TILE,TILE,TILE);
+    ctx.fillStyle='#80FF80';ctx.fillRect(x+TILE,y+TILE,TILE,TILE);
+    ctx.fillStyle='#1A1A1A';ctx.strokeStyle='#1A1A1A';ctx.lineWidth=1;
+    ctx.strokeRect(x,y,2*TILE,2*TILE);
+    // Simple face in each
+    ['#FF4080','#40C0FF','#FFD040','#80FF80'].forEach((c,i)=>{
+      const px=x+(i%2)*TILE+TILE/2,py=y+Math.floor(i/2)*TILE+TILE/2;
+      ctx.fillStyle='#1A1A1A';ctx.fillRect(px-2,py-2,2,2);ctx.fillRect(px+2,py-2,2,2);
+    });
+  },
+  wallclock:(ctx,fx,fy)=>{
+    const x=fx*TILE+TILE/2,y=fy*TILE+TILE/2;
+    ctx.fillStyle='#C8A848';
+    ctx.beginPath();ctx.arc(x,y,TILE-2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#F8F4E8';
+    ctx.beginPath();ctx.arc(x,y,TILE-4,0,Math.PI*2);ctx.fill();
+    // Hands
+    const h=new Date().getHours(),m=new Date().getMinutes();
+    ctx.strokeStyle='#1A1A1A';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(x,y);
+    ctx.lineTo(x+Math.sin(h/12*Math.PI*2)*6,y-Math.cos(h/12*Math.PI*2)*6);ctx.stroke();
+    ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y);
+    ctx.lineTo(x+Math.sin(m/60*Math.PI*2)*8,y-Math.cos(m/60*Math.PI*2)*8);ctx.stroke();
+  },
+  photowall:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Cluster of small frames
+    const frames=[{x:0,y:0,w:10,h:8,c:'#C8A848'},{x:12,y:2,w:8,h:10,c:'#888'},{x:2,y:10,w:12,h:8,c:'#A08040'}];
+    frames.forEach(f=>{
+      ctx.fillStyle=f.c;ctx.fillRect(x+f.x,y+f.y,f.w,f.h);
+      ctx.fillStyle='#E8D8C0';ctx.fillRect(x+f.x+2,y+f.y+2,f.w-4,f.h-4);
+    });
+  },
+  bookshelf:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#3A2818';
+    ctx.fillRect(x,y,3*TILE,3);ctx.fillRect(x,y+TILE,3*TILE,3);ctx.fillRect(x,y+2*TILE,3*TILE,3);
+    ctx.fillRect(x,y,3,3*TILE);ctx.fillRect(x+3*TILE-3,y,3,3*TILE);
+    const bk=['#8B2020','#2040A0','#206030','#B08020','#602080','#C04020','#105060'];
+    for(let i=0;i<6;i++) {ctx.fillStyle=bk[i%7];ctx.fillRect(x+4+i*7,y+4,5,TILE-5);}
+    for(let i=0;i<5;i++) {ctx.fillStyle=bk[(i+3)%7];ctx.fillRect(x+3+i*9,y+TILE+4,7,TILE-5);}
+  },
+
+  // ── MUSIC/ENTERTAINMENT ──────────────
+  guitar:(ctx,fx,fy)=>{
+    const x=fx*TILE+3,y=fy*TILE;
+    ctx.fillStyle='#C07830';
+    ctx.beginPath();ctx.ellipse(x+5,y+20,5,7,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(x+5,y+30,6,7,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#B06820';ctx.fillRect(x+3,y+13,4,18);
+    ctx.fillStyle='#D09040';ctx.fillRect(x+4,y,2,14);ctx.fillRect(x+1,y,7,5);
+    ctx.fillStyle='#1A0A00';
+    ctx.beginPath();ctx.arc(x+5,y+24,2,0,Math.PI*2);ctx.fill();
+  },
+  keyboard:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Electric keyboard on stand
+    ctx.fillStyle='#1A1A1A';ctx.fillRect(x,y+6,4*TILE,8);
+    // White keys
+    ctx.fillStyle='#F0F0F0';
+    for(let k=0;k<12;k++) ctx.fillRect(x+2+k*5,y+7,4,6);
+    // Black keys
+    ctx.fillStyle='#1A1A1A';
+    [1,2,4,5,6,8,9,11].forEach(k=>ctx.fillRect(x+4+k*5,y+7,3,4));
+    // Stand legs
+    ctx.fillStyle='#333';ctx.fillRect(x+4,y+14,2,TILE);ctx.fillRect(x+4*TILE-6,y+14,2,TILE);
+  },
+  arcade:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#2020A0';ctx.fillRect(x,y,2*TILE,4*TILE);
+    ctx.fillStyle='#3030C0';ctx.fillRect(x+2,y+2,2*TILE-4,TILE+4);
+    // Screen
+    ctx.fillStyle='#000';ctx.fillRect(x+4,y+4,2*TILE-8,TILE);
+    const t=Date.now()/300;
+    ctx.fillStyle='#40FF40';ctx.fillRect(x+6+Math.sin(t)*4,y+6,3,3);
+    ctx.fillStyle='#FF4040';ctx.fillRect(x+14+Math.cos(t)*3,y+8,3,3);
+    // Controls
+    ctx.fillStyle='#FF2020';
+    ctx.beginPath();ctx.arc(x+TILE+6,y+2*TILE+4,3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#888';ctx.fillRect(x+6,y+2*TILE+2,4,6);
+    // "INSERT COIN"
+    ctx.fillStyle='#FFD700';ctx.font='3px monospace';ctx.fillText('PLAY',x+6,y+3*TILE+4);
+  },
+
+  // ── PETS & MISC ──────────────────────
+  cat:(ctx,fx,fy)=>{
+    const x=fx*TILE+1,y=fy*TILE+4;const t=Date.now()/800;
+    ctx.fillStyle='#F5DEB3';ctx.fillRect(x+2,y+8,9,7);ctx.fillRect(x+3,y+1,8,8);
+    ctx.fillStyle='#DEB887';ctx.fillRect(x+3,y-1,3,4);ctx.fillRect(x+9,y-1,3,4);
+    ctx.fillStyle='#FFB6C1';ctx.fillRect(x+4,y,2,2);ctx.fillRect(x+10,y,2,2);
+    ctx.fillStyle='#228B22';ctx.fillRect(x+5,y+3,2,2);ctx.fillRect(x+8,y+3,2,2);
+    ctx.fillStyle='#000';ctx.fillRect(x+6,y+3,1,2);ctx.fillRect(x+9,y+3,1,2);
+    ctx.fillStyle='#FFB6C1';ctx.fillRect(x+6,y+6,2,1);
+    ctx.fillStyle='#F5DEB3';ctx.fillRect(x+11,y+10+Math.sin(t)*3|0,1,4);
+  },
+  fishbowl:(ctx,fx,fy)=>{
+    const x=fx*TILE+2,y=fy*TILE;
+    ctx.fillStyle='rgba(150,200,240,0.5)';
+    ctx.beginPath();ctx.arc(x+6,y+8,8,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(150,200,240,0.3)';
+    ctx.beginPath();ctx.arc(x+6,y+8,7,0,Math.PI,false);ctx.fill();
+    // Fish
+    const t=Date.now()/600;
+    ctx.fillStyle='#FF8020';
+    ctx.fillRect(x+4+Math.sin(t)*3,y+8,4,2);
+    ctx.fillRect(x+3+Math.sin(t)*3,y+7,2,4);
+    // Rim
+    ctx.fillStyle='rgba(200,230,250,0.7)';
+    ctx.beginPath();ctx.arc(x+6,y+8,8,Math.PI*1.1,Math.PI*1.9);ctx.stroke();
+  },
+
+  // ── LIGHTING ─────────────────────────
+  lamp:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#D4D4D4';ctx.fillRect(x+5,y+2*TILE-3,6,3);
+    ctx.fillStyle='#1A1A1A';ctx.fillRect(x+7,y+2,2,2*TILE-3);
+    ctx.fillStyle='#F5F5E8';ctx.fillRect(x+3,y,10,8);
+    ctx.fillStyle='#FFFFE0';ctx.fillRect(x+4,y+1,8,6);
+    const tod=getTimeOfDay();
+    if(tod==='night'||tod==='dusk'){
+      ctx.fillStyle='rgba(255,240,150,0.25)';
+      ctx.beginPath();ctx.arc(x+8,y+8,20,0,Math.PI*2);ctx.fill();
+    }
+  },
+
+  // ── FURNITURE EXTRAS ─────────────────
+  plant:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#C87040';ctx.fillRect(x+3,y+10,10,8);
+    ctx.fillStyle='#B06030';ctx.fillRect(x+2,y+8,12,3);
+    ctx.fillStyle='#2E7D32';ctx.fillRect(x+4,y+1,8,8);ctx.fillRect(x+1,y+3,6,6);ctx.fillRect(x+9,y+3,6,6);
+    ctx.fillStyle='#388E3C';ctx.fillRect(x+5,y+2,5,6);
+    ctx.fillStyle='#1B5E20';ctx.fillRect(x+7,y+1,1,9);
+  },
+  desk:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#3A2818';ctx.fillRect(x,y,4*TILE,5);
+    ctx.fillStyle='#1A1A1A';ctx.fillRect(x+4,y+5,3,2*TILE-5);ctx.fillRect(x+4*TILE-7,y+5,3,2*TILE-5);
+    ctx.fillStyle='#1A1A1A';ctx.fillRect(x+TILE,y-18,2*TILE,14);
+    ctx.fillStyle='#2A3A4A';ctx.fillRect(x+TILE+2,y-16,2*TILE-4,10);
+    ctx.fillStyle='rgba(100,200,255,0.3)';ctx.fillRect(x+TILE+3,y-15,2*TILE-6,8);
+  },
+  mirror:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+2,y,12,3*TILE);
+    ctx.fillStyle='#B8D8F8';ctx.fillRect(x+4,y+2,8,3*TILE-4);
+    ctx.fillStyle='rgba(255,255,255,0.35)';ctx.fillRect(x+4,y+2,3,3*TILE-4);
+  },
+  table:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    ctx.fillStyle='#3A2818';ctx.fillRect(x,y,4*TILE,5);
+    ctx.fillStyle='#C8A848';ctx.fillRect(x+4,y+5,3,TILE*2-5);ctx.fillRect(x+4*TILE-7,y+5,3,TILE*2-5);
+    ctx.fillStyle='#FF6B6B';ctx.fillRect(x+TILE,y-3,4,3);
+    ctx.fillStyle='#C8A020';ctx.fillRect(x+2*TILE,y-4,3,4);
+  },
+  vinyl:(ctx,fx,fy)=>{
+    const x=fx*TILE,y=fy*TILE;
+    // Vinyl records leaning on wall
+    ctx.fillStyle='#1A1A1A';
+    ctx.beginPath();ctx.ellipse(x+8,y+10,8,9,-0.15,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#8B2020';
+    ctx.beginPath();ctx.ellipse(x+8,y+10,4,4.5,-0.15,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#C8A848';
+    ctx.beginPath();ctx.arc(x+8,y+10,1.5,0,Math.PI*2);ctx.fill();
+  },
+};
+
+// ── Interactions when tapping furniture ──────
+const FURN_INTERACT = {
+  sofa:     {action:'sit',  stat:'energy',  amt:8,  line:'沙发好舒服，休息一下~'},
+  beanbag:  {action:'sit',  stat:'energy',  amt:6,  line:'懒人沙发太舒服啦'},
+  bed:      {action:'sleep',stat:'energy',  amt:20, line:'晚安，做个好梦♡'},
+  crttv:    {action:'idle', stat:'fun',     amt:10, line:'在看Friends重播~'},
+  recordplayer:{action:'idle',stat:'fun',   amt:12, line:'♪ Imagine~ ♪'},
+  guitar:   {action:'idle', stat:'fun',     amt:15, line:'♪ Let it be~ ♪'},
+  keyboard: {action:'idle', stat:'fun',     amt:12, line:'♪ Piano Man~ ♪'},
+  arcade:   {action:'idle', stat:'fun',     amt:15, line:'PAC-MAN! 高分！'},
+  stove:    {action:'eat',  stat:'hunger',  amt:15, line:'给你做意大利面~'},
+  coffeemaker:{action:'eat',stat:'energy',  amt:8,  line:'来杯咖啡提提神'},
+  fridge:   {action:'eat',  stat:'hunger',  amt:10, line:'冰箱里有什么好吃的？'},
+  bistrotable:{action:'eat',stat:'hunger',  amt:8,  line:'一起吃早餐吧♡'},
+  vanity:   {action:'wash', stat:'clean',   amt:12, line:'化个美美的妆~'},
+  bookshelf:{action:'idle', stat:'fun',     amt:8,  line:'读一会儿书'},
+  typewriter:{action:'idle',stat:'fun',     amt:10, line:'写首诗给你♡'},
+  rotaryphone:{action:'idle',stat:'fun',    amt:5,  line:'Hello? 是Yoko打来的'},
+  plant:    {action:'idle', stat:'clean',   amt:5,  line:'给植物浇浇水'},
+  globe:    {action:'idle', stat:'fun',     amt:5,  line:'下次去哪旅行呢？'},
+  fishbowl: {action:'idle', stat:'fun',     amt:5,  line:'小鱼在游泳~'},
+  cat:      {action:'idle', stat:'intimacy',amt:8,  line:'喵~蹭蹭'},
+};
+
+// ── Food items (consumable, not placed) ──────
+const FOOD_ITEMS = {
+  pizza:    {emoji:'🍕',line:'纽约最好的披萨！',stat:'hunger',amt:15},
+  takeout:  {emoji:'🥡',line:'中餐外卖到了~',stat:'hunger',amt:12},
+  bagel:    {emoji:'🥯',line:'百吉饼配奶油芝士♡',stat:'hunger',amt:8},
+  hotdog:   {emoji:'🌭',line:'Central Park的热狗！',stat:'hunger',amt:10},
+  coffee:   {emoji:'☕',line:'来杯美式提提神',stat:'energy',amt:10},
+  wine:     {emoji:'🍷',line:'晚上喝杯红酒♡',stat:'intimacy',amt:12},
+  icecream: {emoji:'🍦',line:'一起吃冰淇淋~',stat:'fun',amt:8},
+  cookie:   {emoji:'🍪',line:'烤了饼干给你♡',stat:'hunger',amt:6},
+};
+
+// ── Dynamic furniture position system ─────────
+function getFurnPos(id){
+  if(FURN_POSITIONS[id]) return FURN_POSITIONS[id];
+  // Default positions
+  const defaults = {
+    rug:{x:3,y:10},sofa:{x:3,y:8},glasstable:{x:4,y:12},bed:{x:1,y:14},
+    desk:{x:9,y:12},plant:{x:1,y:5},lamp:{x:11,y:7},bookshelf:{x:9,y:5},
+    guitar:{x:0,y:7},cat:{x:6,y:15},mirror:{x:12,y:10},crttv:{x:4,y:5},
+    recordplayer:{x:8,y:8},floorlamp:{x:0,y:9},lavalamp:{x:12,y:5},
+    neon:{x:5,y:1},beanbag:{x:7,y:12},nightstand:{x:6,y:14},vanity:{x:9,y:14},
+    clothrack:{x:12,y:14},fridge:{x:0,y:12},stove:{x:10,y:8},coffeemaker:{x:12,y:8},
+    bistrotable:{x:2,y:12},rotaryphone:{x:6,y:5},typewriter:{x:8,y:12},
+    globe:{x:11,y:5},poster:{x:3,y:1},wallclock:{x:7,y:1},photowall:{x:10,y:1},
+    keyboard:{x:5,y:10},arcade:{x:11,y:10},lazySofa:{x:7,y:14},
+    fishbowl:{x:12,y:12},table:{x:4,y:14},vinyl:{x:1,y:1},
+  };
+  return defaults[id]||{x:5,y:8};
+}
+
+function drawFurnitureItems(){
+  const order=['rug','glasstable','table','sofa','beanbag','lazySofa','bed','nightstand','vanity','clothrack',
+    'desk','crttv','recordplayer','fridge','stove','coffeemaker','bistrotable',
+    'plant','lamp','floorlamp','lavalamp','bookshelf','guitar','keyboard','arcade',
+    'cat','fishbowl','mirror','rotaryphone','typewriter','globe',
+    'poster','neon','wallclock','photowall','vinyl'];
+  order.forEach(id=>{
+    if(GAME.ownedItems.has(id)&&FURN_DRAW[id]){
+      const p=getFurnPos(id);
+      FURN_DRAW[id](CTX,p.x,p.y);
+    }
+  });
+}
+
+// ── Furniture tap interaction ─────────────────
+function handleFurnitureTap(cx,cy){
+  for(const [id,draw] of Object.entries(FURN_DRAW)){
+    if(!GAME.ownedItems.has(id)) continue;
+    const p=getFurnPos(id);
+    const fx=p.x*TILE,fy=p.y*TILE;
+    if(cx>=fx&&cx<=fx+3*TILE&&cy>=fy&&cy<=fy+3*TILE){
+      const inter=FURN_INTERACT[id];
+      if(!inter) return false;
+      // Move John to furniture
+      const j=CHARS.john;
+      j.tx=(p.x+1)*TILE;j.ty=(p.y+1)*TILE;j.state='walk';
+      setTimeout(()=>{
+        if(inter.action!=='idle') j.state=inter.action;
+        j.stateTimer=150;
+        j.needs[inter.stat]=Math.min(100,(j.needs[inter.stat]||50)+inter.amt);
+        CHARS.rainie.needs[inter.stat]=Math.min(100,(CHARS.rainie.needs[inter.stat]||50)+Math.floor(inter.amt/2));
+        j.bubble=inter.line;j.bubbleTimer=120;
+        drawBubble(0,0,inter.line,'john');
+      },1500);
+      return true;
+    }
+  }
+  return false;
+}
+
+// ── Placement mode ────────────────────────────
+function enterPlacementMode(){
+  placementMode=true;
+  placementItem=null;
+  showPlacementUI();
+}
+function exitPlacementMode(){
+  placementMode=false;
+  placementItem=null;
+  const ui=document.getElementById('placement-ui');
+  if(ui) ui.style.display='none';
+}
+function showPlacementUI(){
+  let ui=document.getElementById('placement-ui');
+  if(!ui){
+    ui=document.createElement('div');
+    ui.id='placement-ui';
+    ui.style.cssText="position:absolute;bottom:0;left:0;right:0;background:rgba(42,32,24,0.95);border-top:3px solid #E8B830;padding:10px;z-index:60;display:flex;flex-direction:column;gap:8px";
+    ui.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-family:'VT323',monospace;font-size:1rem;color:#E8B830">🏠 选择家具放置</span>
+      <button onclick="exitPlacementMode()" style="background:#3A2818;border:2px solid #5A4830;color:#A89070;padding:4px 10px;font-family:'VT323',monospace;font-size:.9rem;border-radius:4px;cursor:pointer">完成 ✓</button>
+    </div>
+    <div id="placement-items" style="display:flex;gap:8px;overflow-x:auto;padding:4px 0"></div>`;
+    const canvasWrap=document.querySelector('#tab-room > div:nth-child(3)');
+    if(canvasWrap) canvasWrap.appendChild(ui);
+  }
+  ui.style.display='flex';
+  // Fill with owned furniture
+  const items=document.getElementById('placement-items');
+  if(!items) return;
+  items.innerHTML='';
+  Object.keys(FURN_DRAW).forEach(id=>{
+    if(!GAME.ownedItems.has(id)) return;
+    const btn=document.createElement('button');
+    btn.style.cssText="background:"+(placementItem===id?'#5A4830':'#1A1208')+";border:2px solid "+(placementItem===id?'#E8B830':'#5A4830')+";color:#FFF8DC;padding:6px 10px;font-family:'VT323',monospace;font-size:.85rem;white-space:nowrap;border-radius:4px;cursor:pointer;flex-shrink:0";
+    btn.textContent=id;
+    btn.onclick=()=>{placementItem=id;showPlacementUI();};
+    items.appendChild(btn);
+  });
+}
+function handlePlacementTap(cx,cy){
+  if(!placementItem) return;
+  const gx=Math.floor(cx/TILE);
+  const gy=Math.floor(cy/TILE);
+  if(gy<1||gy>=RH-1||gx<0||gx>=RW-1) return;
+  FURN_POSITIONS[placementItem]={x:gx,y:gy};
+  saveFurnPositions();
+  showToast('✓ 已放置 '+placementItem);
+  placementItem=null;
+  showPlacementUI();
+}
+function saveFurnPositions(){
+  try{localStorage.setItem('furn_pos',JSON.stringify(FURN_POSITIONS));}catch(e){}
+}
+function loadFurnPositions(){
+  try{const d=localStorage.getItem('furn_pos');if(d)FURN_POSITIONS=JSON.parse(d);}catch(e){}
+}
+
+// ── Character images ──────────────────────────
+let charImgs={};
+function preloadCharImages(cb){
+  let done=0,total=8;
+  for(let i=1;i<=4;i++){
+    ['rainie','john'].forEach(who=>{
+      const img=new Image();
+      img.onload=img.onerror=()=>{done++;if(done>=total)cb();};
+      img.src=SPR[who+'_'+i]||'';
+      charImgs[who+'_'+i]=img;
+    });
+  }
+}
+
+// ── Character state ───────────────────────────
+const CHARS={
+  rainie:{
+    x:5*TILE, y:10*TILE,
+    tx:5*TILE, ty:10*TILE,
+    dir:1, // 1=right, -1=left
+    anim:0, animTimer:0,
+    state:'idle', // idle|walk|eat|sleep|wash|hug|kiss
+    stateTimer:0,
+    needs:{hunger:80,clean:75,fun:70,energy:85,intimacy:60},
+    outfit:1,
+    bubble:'', bubbleTimer:0,
+  },
+  john:{
+    x:10*TILE, y:10*TILE,
+    tx:10*TILE, ty:10*TILE,
+    dir:-1,
+    anim:0, animTimer:0,
+    state:'idle',
+    stateTimer:0,
+    needs:{hunger:75,clean:80,fun:65,energy:70,intimacy:60},
+    outfit:1,
+    bubble:'', bubbleTimer:0,
+    aiTimer:0,
+  },
+};
+
+// ── John's lines ──────────────────────────────
+const JOHN_IDLE=[
+  "Rainie，你是我见过最用功的人♡",
+  "All you need is love — I'm right here",
+  "你笑的时候，我忘记弹吉他了",
+  "考过驾照那天，我们去兜风♡",
+  "Imagine... you've already passed~",
+  "你知道吗，我最喜欢看你认真的样子",
+  "我不需要去任何地方，只要你在",
+  "每次你答对题，我心里也会跳一下",
+  "Life is what happens while you study",
+  "你比你想象中强很多，真的",
+  "I love you more than music — almost",
+  "今晚的纽约，为你亮灯",
+];
+const JOHN_ENCOURAGE=[
+  "加油！就差这一步了",
+  "这题你肯定会，相信自己",
+  "记住：VERO是真，FALSO是假",
+  "你每天的努力我都看见了♡",
+  "Come on Rainie，你最棒！",
+  "休息一下再来，我等你",
+];
+const JOHN_LOVE=[
+  "Can I stay like this a little longer?",
+  "这一刻我不想写任何歌，就看着你",
+  "你是我在这个房间里最美的风景",
+  "I've been in love with you since forever",
+  "我想牵着你的手走过纽约所有街道♡",
+];
+const JOHN_HUNGRY=["有点饿了呢……","能给我泡杯茶吗♡","肚子在唱歌了"];
+const JOHN_TIRED=["有点困……","能在床上休息一会吗？","zzz..."];
+
+const RAINIE_LINES=[
+  "我要考过！",
+  "今天刷了好多题♡",
+  "John，你在看我吗？",
+  "纽约的夜晚好美",
+  "加油加油！",
+];
+
+const JOHN_QUIZ_GOOD=["你今天答对好多题，太厉害了！","继续保持，驾照就在前方！","错误率在降，看到你的进步了♡","你比昨天又强了一点"];
+const JOHN_QUIZ_BAD=["没关系，错了才知道哪里薄弱","休息一下再来，别太累了","慢慢来，我一直在这里等你♡","这些题确实难，别灰心"];
+const JOHN_QUIZ_NONE=["今天还没刷题呢，要不要来几道？","知识需要每天浇灌~","一起去刷题吧，我给你加油！"];
+
+function getJohnLine(ctx){
+  if(ctx==='encourage') return JOHN_ENCOURAGE[Math.floor(Math.random()*JOHN_ENCOURAGE.length)];
+  if(ctx==='love')      return JOHN_LOVE[Math.floor(Math.random()*JOHN_LOVE.length)];
+  if(ctx==='hungry')    return JOHN_HUNGRY[Math.floor(Math.random()*JOHN_HUNGRY.length)];
+  if(ctx==='tired')     return JOHN_TIRED[Math.floor(Math.random()*JOHN_TIRED.length)];
+  // Quiz-aware: check study stats
+  if(ctx==='idle'&&Math.random()<0.35){
+    try{
+      const stats=JSON.parse(localStorage.getItem('stats')||'{}');
+      const total=(stats.correct||0)+(stats.wrong||0);
+      const hoursSince=(Date.now()-GAME.lastStudy)/(1000*3600);
+      if(hoursSince>6) return JOHN_QUIZ_NONE[Math.floor(Math.random()*JOHN_QUIZ_NONE.length)];
+      if(total>10&&stats.correct/(total||1)>0.7) return JOHN_QUIZ_GOOD[Math.floor(Math.random()*JOHN_QUIZ_GOOD.length)];
+      if(total>5&&stats.wrong/(total||1)>0.4) return JOHN_QUIZ_BAD[Math.floor(Math.random()*JOHN_QUIZ_BAD.length)];
+    }catch(e){}
+  }
+  return JOHN_IDLE[Math.floor(Math.random()*JOHN_IDLE.length)];
+}
+
+// ── Drawing characters ────────────────────────
+function drawCharacters(){
+  const now=Date.now();
+  // Update animation
+  ['rainie','john'].forEach(who=>{
+    const c=CHARS[who];
+    // Both chars move toward their target
+    const dx=c.tx-c.x, dy=c.ty-c.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist>2){
+      const spd=1.2;
+      c.x+=dx/dist*spd; c.y+=dy/dist*spd;
+      c.dir=dx>0?1:-1;
+      if(c.state!=='eat'&&c.state!=='sleep'&&c.state!=='hug'&&c.state!=='kiss') c.state='walk';
+    } else {
+      c.x=c.tx; c.y=c.ty;
+      if(c.state==='walk') c.state='idle';
+    }
+    // Anim frame
+    c.animTimer++;
+    if(c.animTimer>8){c.anim=(c.anim+1)%4;c.animTimer=0;}
+    // Bubble countdown
+    if(c.bubbleTimer>0) c.bubbleTimer--;
+  });
+
+  // John AI
+  updateJohnAI();
+
+  // Draw both
+  drawChar('john');
+  drawChar('rainie');
+}
+
+
+function drawChar(who){
+  const c=CHARS[who];
+  const img=charImgs[who+'_'+(c.outfit||1)];
+  if(!img||!img.complete||!img.naturalWidth) return;
+
+  CTX.save();
+  // Flip for direction
+  if(c.dir<0){
+    CTX.translate(c.x+TILE,c.y);
+    CTX.scale(-1,1);
+  } else {
+    CTX.translate(c.x,c.y);
+  }
+
+  // Walk bounce - only Rainie
+  let bounceY=0;
+  if(who==='rainie'&&c.state==='walk') bounceY=c.anim%2===0?-3:0;
+
+  // State-based drawing
+  if(c.state==='sleep'){
+    // Lie down - rotate 90
+    CTX.translate(TILE/2,TILE);
+    CTX.rotate(Math.PI/2);
+    CTX.drawImage(img,-TILE/2,bounceY,2*TILE,3*TILE);
+    // zzz
+    CTX.setTransform(1,0,0,1,0,0);
+    const zx=c.x+(c.dir>0?2*TILE:-TILE), zy=c.y-8;
+    CTX.font='bold 8px monospace';
+    CTX.fillStyle=`rgba(100,150,255,${0.5+0.5*Math.sin(Date.now()/600)})`;
+    const zoff=Math.floor(Date.now()/800)%3;
+    CTX.fillText('z'.repeat(zoff+1),zx,zy);
+  } else if(c.state==='eat'){
+    CTX.drawImage(img,0,bounceY,2*TILE,3*TILE);
+    // Fork animation
+    CTX.setTransform(1,0,0,1,0,0);
+    const armUp=c.anim<2;
+    CTX.font='10px serif';
+    CTX.fillText('🍴',c.x+TILE,c.y+(armUp?-TILE:0));
+    CTX.fillText('☁',c.x,c.y-TILE);
+  } else if(c.state==='wash'){
+    CTX.drawImage(img,0,bounceY,2*TILE,3*TILE);
+    CTX.setTransform(1,0,0,1,0,0);
+    // Water drops
+    for(let i=0;i<3;i++){
+      const drop=particles.find(p=>p.id===who+'drop'+i);
+      if(!drop) particles.push({id:who+'drop'+i,type:'drop',x:c.x+TILE-4+i*5,y:c.y-8,vy:1,life:1});
+    }
+  } else {
+    CTX.drawImage(img,0,bounceY,2*TILE,3*TILE);
+  }
+
+  // Hug/kiss effects between chars
+  if(c.state==='hug'||c.state==='kiss'){
+    CTX.setTransform(1,0,0,1,0,0);
+    const t=Date.now()/400;
+    if(c.state==='kiss'){
+      // Big heart
+      CTX.font=`${16+Math.sin(t)*4}px serif`;
+      CTX.fillText('♡',c.x+TILE/2,c.y-TILE);
+      // Stars
+      for(let i=0;i<3;i++){
+        const a=t+i*2.1, r=20+i*6;
+        CTX.font='8px serif';
+        CTX.fillText('✦',c.x+TILE+Math.cos(a)*r,c.y+Math.sin(a)*r);
+      }
+    } else {
+      CTX.font='12px serif';
+      CTX.fillText('💗',c.x+TILE/2,c.y-TILE+Math.sin(t)*3);
+    }
+  }
+
+  CTX.restore();
+
+  // Speech bubble
+  if(c.bubbleTimer>0&&c.bubble){
+    drawBubble(0,0,c.bubble,who);
+  }
+}
+
+function drawBubble(x,y,txt,who){
+  // Route ALL speech to the HTML dialogue box for readability
+  const box=document.getElementById('dialogue-box');
+  const spk=document.getElementById('dialogue-speaker');
+  const dtxt=document.getElementById('dialogue-text');
+  if(!box||!spk||!dtxt) return;
+  spk.textContent=(who==='rainie')?'🎀 Rainie':'🎸 John';
+  spk.style.color=(who==='rainie')?'#FFB0C0':'#B0C0FF';
+  dtxt.textContent=txt;
+  // Flash border
+  box.style.borderTopColor='#FFD700';
+  setTimeout(()=>{if(box)box.style.borderTopColor='#E8B830';},800);
+}
+
+// ── Particles ─────────────────────────────────
+function drawParticles(){
+  particles=particles.filter(p=>{
+    if(p.type==='rain'){
+      p.x+=p.vx; p.y+=p.vy;
+      CTX.fillStyle='rgba(150,180,255,0.5)';
+      CTX.fillRect(p.x,p.y,1,4);
+      return p.y<RH*TILE&&p.x>0&&p.x<RW*TILE;
+    }
+    if(p.type==='drop'){
+      p.y+=p.vy;
+      CTX.fillStyle='rgba(100,150,255,0.7)';
+      CTX.fillRect(p.x,p.y,2,2);
+      p.life-=0.05;
+      return p.life>0&&p.y<RH*TILE;
+    }
+    if(p.type==='heart'){
+      p.y-=0.5; p.life-=0.02;
+      CTX.font='8px serif';
+      CTX.globalAlpha=p.life;
+      CTX.fillText('♡',p.x,p.y);
+      CTX.globalAlpha=1;
+      return p.life>0;
+    }
+    return false;
+  });
+}
+
+// ── UI overlay (time/weather indicator) ──────
+function drawUI(){
+  const tod=getTimeOfDay();
+  const icons={dawn:'🌅',day:'☀️',dusk:'🌆',night:'🌙'};
+  CTX.font='10px serif';
+  CTX.fillText(icons[tod]||'',RW*TILE-18,14);
+}
+
+// ── John AI ───────────────────────────────────
+function updateJohnAI(){
+  const j=CHARS.john;
+  j.aiTimer++;
+  if(j.aiTimer<120) return; // think every ~2 sec
+  j.aiTimer=0;
+
+  const n=j.needs;
+
+  // Decide what to do based on lowest need
+  const lowest=Object.entries(n).reduce((a,b)=>a[1]<b[1]?a:b);
+
+  if(lowest[1]>40){
+    // Wander or approach Rainie
+    const r=CHARS.rainie;
+    const dist=Math.abs(j.x-r.x)+Math.abs(j.y-r.y);
+    if(Math.random()<0.3&&dist>4*TILE){
+      // Walk towards Rainie
+      j.tx=r.x+(Math.random()>0.5?3:-3)*TILE;
+      j.ty=r.y;
+      j.state='walk';
+      if(Math.random()<0.4){
+        j.bubble=getJohnLine(dist<5*TILE?'love':'idle');
+        j.bubbleTimer=100;
+      }
+    } else {
+      // Random wander
+      j.tx=Math.max(TILE,Math.min((RW-2)*TILE,j.tx+(Math.random()-0.5)*4*TILE));
+      j.ty=Math.max(3*TILE,Math.min((RH-2)*TILE,j.ty+(Math.random()-0.5)*2*TILE));
+      j.state='walk';
+    }
+    // Decrease all needs slowly
+    Object.keys(n).forEach(k=>n[k]=Math.max(0,n[k]-0.3));
+    return;
+  }
+
+  // Address lowest need
+  if(lowest[0]==='hunger'){
+    j.bubble=getJohnLine('hungry');j.bubbleTimer=100;
+    if(GAME.ownedItems.has('table')){
+      const p=FURN_POS.table;
+      j.tx=(p.x+1)*TILE;j.ty=(p.y+1)*TILE;j.state='walk';
+      setTimeout(()=>{if(j.state!=='eat'){j.state='eat';j.stateTimer=200;n.hunger=Math.min(100,n.hunger+20);}},2000);
+    }
+  } else if(lowest[0]==='energy'){
+    j.bubble=getJohnLine('tired');j.bubbleTimer=100;
+    if(GAME.ownedItems.has('bed')){
+      const p=FURN_POS.bed;
+      j.tx=(p.x+2)*TILE;j.ty=(p.y+2)*TILE;j.state='walk';
+      setTimeout(()=>{if(j.state!=='sleep'){j.state='sleep';j.stateTimer=400;n.energy=Math.min(100,n.energy+30);}},3000);
+    }
+  } else if(lowest[0]==='fun'){
+    if(GAME.ownedItems.has('guitar')){
+      const p=FURN_POS.guitar;
+      j.tx=(p.x+1)*TILE;j.ty=(p.y+2)*TILE;j.state='walk';
+      j.bubble="♪ Let it be~ ♪";j.bubbleTimer=120;
+      setTimeout(()=>{n.fun=Math.min(100,n.fun+15);},2000);
+    }
+  } else if(lowest[0]==='intimacy'){
+    const r=CHARS.rainie;
+    j.tx=r.x+2*TILE;j.ty=r.y;j.state='walk';
+    j.bubble=getJohnLine('love');j.bubbleTimer=120;
+    setTimeout(()=>{
+      const dist=Math.abs(j.x-r.x)+Math.abs(j.y-r.y);
+      if(dist<4*TILE){
+        triggerHug();
+      }
+    },3000);
+  }
+}
+
+// ── Interactions ──────────────────────────────
+function triggerHug(){
+  CHARS.rainie.state='hug';CHARS.john.state='hug';
+  CHARS.rainie.stateTimer=80;CHARS.john.stateTimer=80;
+  CHARS.rainie.needs.intimacy=Math.min(100,CHARS.rainie.needs.intimacy+15);
+  CHARS.john.needs.intimacy=Math.min(100,CHARS.john.needs.intimacy+15);
+  // Hearts
+  for(let i=0;i<5;i++) particles.push({type:'heart',x:(CHARS.rainie.x+CHARS.john.x)/2+Math.random()*20-10,y:CHARS.rainie.y-TILE,life:1});
+  CHARS.john.bubble=getJohnLine('love');CHARS.john.bubbleTimer=120;
+  setTimeout(()=>{CHARS.rainie.state='idle';CHARS.john.state='idle';},2500);
+}
+
+function triggerKiss(){
+  CHARS.rainie.state='kiss';CHARS.john.state='kiss';
+  CHARS.rainie.needs.intimacy=Math.min(100,CHARS.rainie.needs.intimacy+25);
+  CHARS.john.needs.intimacy=Math.min(100,CHARS.john.needs.intimacy+25);
+  for(let i=0;i<8;i++) particles.push({type:'heart',x:(CHARS.rainie.x+CHARS.john.x)/2+Math.random()*30-15,y:CHARS.rainie.y-TILE*1.5,life:1});
+  CHARS.john.bubble="♡♡♡";CHARS.john.bubbleTimer=150;
+  setTimeout(()=>{CHARS.rainie.state='idle';CHARS.john.state='idle';},3000);
+}
+
+// Handle canvas tap - move Rainie
+function handleRoomTap(e){
+  if(!RC)return;
+  const rect=RC.getBoundingClientRect();
+  const sx=RC.width/rect.width;
+  const sy=RC.height/rect.height;
+  const tx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+  const ty=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+  const cx=tx*sx, cy=ty*sy;
+
+  // Placement mode - place furniture
+  if(placementMode&&placementItem){
+    handlePlacementTap(cx,cy);
+    return;
+  }
+
+  // Check if tapping a character
+  const r=CHARS.rainie, j=CHARS.john;
+  const rDist=Math.sqrt((cx-r.x-TILE)*(cx-r.x-TILE)+(cy-r.y-TILE)*(cy-r.y-TILE));
+  const jDist=Math.sqrt((cx-j.x-TILE)*(cx-j.x-TILE)+(cy-j.y-TILE)*(cy-j.y-TILE));
+
+  if(jDist<2*TILE){
+    j.bubble=getJohnLine('idle');j.bubbleTimer=120;
+    drawBubble(0,0,j.bubble,'john');
+    return;
+  }
+  if(rDist<2*TILE){
+    r.bubble=RAINIE_LINES[Math.floor(Math.random()*RAINIE_LINES.length)];
+    r.bubbleTimer=100;
+    drawBubble(0,0,r.bubble,'rainie');
+    const dist=Math.abs(r.x-j.x)+Math.abs(r.y-j.y);
+    if(dist<3*TILE) showInteractMenu(r.x,r.y);
+    return;
+  }
+
+  // Check furniture tap
+  if(handleFurnitureTap(cx,cy)) return;
+
+  // Move Rainie
+  const minX=TILE, maxX=(RW-2)*TILE;
+  const minY=4*TILE, maxY=(RH-2)*TILE;
+  r.tx=Math.max(minX,Math.min(maxX,cx-TILE));
+  r.ty=Math.max(minY,Math.min(maxY,cy-TILE));
+  r.state='walk';
+}
+
+// Interaction menu when near John
+let interactMenuShown=false;
+function showInteractMenu(x,y){
+  if(interactMenuShown)return;
+  interactMenuShown=true;
+  const menu=document.createElement('div');
+  menu.id='interact-menu';
+  menu.style.cssText=`position:fixed;bottom:30%;left:50%;transform:translateX(-50%);background:#FFF8DC;border:3px solid #8B6840;display:flex;gap:8px;padding:10px;z-index:100;font-family:'VT323',monospace;font-size:.85rem;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3)`;
+  menu.innerHTML=`<button onclick="doHug()" style="background:#F8E0D8;border:2px solid #C88070;padding:6px 10px;cursor:pointer;font-family:'VT323',monospace;font-size:.8rem;border-radius:4px">💗 拥抱</button><button onclick="doKiss()" style="background:#F0D8E8;border:2px solid #C070A0;padding:6px 10px;cursor:pointer;font-family:'VT323',monospace;font-size:.8rem;border-radius:4px">💋 亲亲</button><button onclick="closeInteract()" style="background:#E0D8C8;border:2px solid #A89070;padding:6px 10px;cursor:pointer;font-family:'VT323',monospace;font-size:.8rem;border-radius:4px">✕</button>`;
+  document.body.appendChild(menu);
+  setTimeout(closeInteract,4000);
+}
+function closeInteract(){interactMenuShown=false;const m=document.getElementById('interact-menu');if(m)m.remove();}
+function doHug(){closeInteract();triggerHug();}
+function doKiss(){closeInteract();triggerKiss();}
+
+// Needs panel
+let needsPanelChar=null;
+function showNeeds(who){
+  needsPanelChar=who;
+  const c=CHARS[who];
+  const panel=document.getElementById('needs-panel');
+  if(!panel)return;
+  const n=c.needs;
+  document.getElementById('needs-title').textContent=(who==='rainie'?'🎀 Rainie':'🎸 John')+' 的状态';
+  const bars=['hunger','clean','fun','energy','intimacy'];
+  const labels={hunger:'🍽️ 饥饿',clean:'🚿 清洁',fun:'🎮 娱乐',energy:'💤 精力',intimacy:'💗 亲密'};
+  const colors={hunger:'#FF8060',clean:'#60A0FF',fun:'#60D080',energy:'#FFD060',intimacy:'#FF80B0'};
+  document.getElementById('needs-bars').innerHTML=bars.map(k=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <div style="font-family:'VT323',monospace;font-size:1rem;width:60px;flex-shrink:0;color:#A89070">${labels[k]}</div>
+      <div style="flex:1;height:14px;background:#1A1208;border:2px solid #5A4830;overflow:hidden;border-radius:4px">
+        <div style="height:100%;width:${n[k]}%;background:${colors[k]};transition:width .4s"></div>
+      </div>
+      <div style="font-family:'VT323',monospace;font-size:1rem;color:#FFF8DC;width:30px;text-align:right">${Math.round(n[k])}</div>
+    </div>`).join('');
+  panel.style.display='block';
+}
+function hideNeeds(){const p=document.getElementById('needs-panel');if(p)p.style.display='none';}
+
+// State timer update
+function updateStateTimers(){
+  ['rainie','john'].forEach(who=>{
+    const c=CHARS[who];
+    if(c.stateTimer>0){
+      c.stateTimer--;
+      if(c.stateTimer<=0&&(c.state==='eat'||c.state==='wash'||c.state==='sleep')){
+        c.state='idle';
+      }
+    }
+  });
+}
+setInterval(updateStateTimers,100);
+
+// Need decay
+setInterval(()=>{
+  ['rainie','john'].forEach(who=>{
+    const n=CHARS[who].needs;
+    n.hunger=Math.max(0,n.hunger-0.5);
+    n.clean=Math.max(0,n.clean-0.3);
+    n.fun=Math.max(0,n.fun-0.4);
+    n.energy=Math.max(0,n.energy-0.35);
+    n.intimacy=Math.max(0,n.intimacy-0.2);
+  });
+  // Sync to GAME stats for bar display
+  const avg=k=>(CHARS.rainie.needs[k]+CHARS.john.needs[k])/2;
+  GAME.health=avg('energy');GAME.study=avg('fun');
+  GAME.clean=avg('clean');GAME.happy=avg('intimacy');
+},1000);
+
+// Auto-save needs every 30s
+setInterval(()=>{saveGame();},30000);
+
+// Room init
+function initRoomV11(){
+  const canvas=document.getElementById('room-canvas');
+  if(!canvas)return;
+  // Remove old listeners then add fresh
+  const newCanvas=canvas.cloneNode(true);
+  canvas.parentNode.replaceChild(newCanvas,canvas);
+  newCanvas.addEventListener('click',handleRoomTap);
+  newCanvas.addEventListener('touchstart',e=>{e.preventDefault();handleRoomTap(e);},{passive:false});
+  initRoom();
+}
+
+// Apply outfit changes to CHARS
+function applyOutfit(who,idx){
+  CHARS[who].outfit=idx;
+}
+
+// ═══════════════════════════════════════════════
+//  PIXEL GAME STATE
+// ═══════════════════════════════════════════════
+let GAME={pts:0,xp:0,level:1,health:80,clean:70,study:50,happy:60,ownedItems:new Set(),lastStudy:Date.now(),rainieOutfit:1,johnOutfit:1};
+const LEVELS=['初学者','练习生','学员','准驾员','技术派','资深生','考试达人','驾照候选','准王者','驾照王者'];
+const XP_PER_LEVEL=[100,200,350,550,800,1100,1500,2000,2700];
+
+function loadGame(){try{const g=localStorage.getItem('pgame');if(g){const d=JSON.parse(g);Object.keys(d).forEach(k=>{if(k!=='ownedItems'&&k!=='charNeeds')GAME[k]=d[k];});GAME.ownedItems=new Set(d.ownedItems||[]);if(!GAME.rainieOutfit)GAME.rainieOutfit=1;if(!GAME.johnOutfit)GAME.johnOutfit=1;if(d.charNeeds){if(d.charNeeds.rainie)Object.assign(CHARS.rainie.needs,d.charNeeds.rainie);if(d.charNeeds.john)Object.assign(CHARS.john.needs,d.charNeeds.john);}}}catch(e){}}
+function saveGame(){try{const g={pts:GAME.pts,xp:GAME.xp,level:GAME.level,health:GAME.health,clean:GAME.clean,study:GAME.study,happy:GAME.happy,lastStudy:GAME.lastStudy,rainieOutfit:GAME.rainieOutfit,johnOutfit:GAME.johnOutfit,ownedItems:[...GAME.ownedItems],charNeeds:{rainie:{...CHARS.rainie.needs},john:{...CHARS.john.needs}}};localStorage.setItem('pgame',JSON.stringify(g));}catch(e){}}
+
+function initGameState(){loadGame();loadFurnPositions();}
+
+function awardPoints(pts,reason){
+  GAME.pts+=pts;GAME.xp+=Math.floor(pts*0.5);
+  GAME.study=Math.min(100,GAME.study+3);
+  GAME.happy=Math.min(100,GAME.happy+2);
+  GAME.health=Math.min(100,GAME.health+1);
+  GAME.lastStudy=Date.now();
+  // Level up check
+  const xpNeeded=XP_PER_LEVEL[Math.min(GAME.level-1,XP_PER_LEVEL.length-1)]||3000;
+  if(GAME.xp>=xpNeeded&&GAME.level<10){GAME.xp-=xpNeeded;GAME.level++;showToast('🎉 升级了！Lv.'+GAME.level+' '+LEVELS[GAME.level-1]);}
+  saveGame();
+  showPtsPopup('+'+pts+' pts');
+  updatePtsBadge();
+}
+
+function showPtsPopup(txt){
+  const el=document.createElement('div');el.className='pts-pop';el.textContent=txt;
+  const x=window.innerWidth/2-30;const y=window.innerHeight/2-60;
+  el.style.left=x+'px';el.style.top=y+'px';
+  document.getElementById('pts-popups').appendChild(el);
+  setTimeout(()=>el.remove(),1500);
+}
+
+function updatePtsBadge(){
+  const b=document.getElementById('pts-badge');if(b)b.textContent='🪙 '+GAME.pts;
+  const r=document.getElementById('room-pts-txt');if(r)r.textContent=GAME.pts;
+  const s=document.getElementById('shop-pts-num');if(s)s.textContent=GAME.pts;
+}
+
+// Stat decay - called periodically
+function startStatDecay(){
+  setInterval(()=>{
+    const hoursSince=(Date.now()-GAME.lastStudy)/(1000*3600);
+    if(hoursSince>4){
+      GAME.health=Math.max(0,GAME.health-1);
+      GAME.clean=Math.max(0,GAME.clean-1);
+      if(hoursSince>8){GAME.happy=Math.max(0,GAME.happy-1);}
+      saveGame();
+      updateStatBars();
+    }
+  },60000); // check every minute
+}
+
+function updateStatBars(){
+  // Now handled by CHARS needs system - update display bars if visible
+  const sv={health:GAME.health,clean:GAME.clean,study:GAME.study,happy:GAME.happy};
+  Object.entries(sv).forEach(([k,v])=>{
+    const bf=document.getElementById('sb-'+k);const bv=document.getElementById('sv-'+k);
+    if(bf){bf.style.width=v+'%';}if(bv)bv.textContent=Math.round(v);
+  });
+  // legacy _fn:
+
+  const bars={health:'#e94560',clean:'#60a5fa',study:'#4ade80',happy:'#ffd700'};
+  Object.entries(bars).forEach(([key,col])=>{
+    const bf=document.getElementById('sb-'+key);const bv=document.getElementById('sv-'+key);
+    if(bf){bf.style.width=GAME[key]+'%';bf.style.background=col;}
+    if(bv)bv.textContent=Math.round(GAME[key]);
+  });
+}
+
+// ─── Character sprites ──────────────────────────────────────────────────────
+let walkTick=0,walkInterval=null;
+
+function updateCharSprite(who){
+  const outfit=who==='rainie'?GAME.rainieOutfit:GAME.johnOutfit;
+  const src=SPR[who+'_'+outfit]||SPR[who+'_1'];
+  const el=document.getElementById('char-'+who+'-img');
+  if(el&&src)el.src=src;
+}
+
+function startWalkAnimation(){
+  if(walkInterval)return;
+  walkInterval=setInterval(()=>{
+    walkTick++;
+    const rImg=document.getElementById('char-rainie-img');
+    const jImg=document.getElementById('char-john-img');
+    const bounce=(walkTick%2===0)?'0px':'-5px';
+    // Rainie faces right half time
+    const rFlip=(walkTick%8)<4?'scaleX(1)':'scaleX(-1)';
+    if(rImg)rImg.style.transform=`translateY(${bounce}) ${rFlip}`;
+    if(jImg)jImg.style.transform=`translateY(${bounce})`;
+  },500);
+}
+
+function stopWalkAnimation(){
+  if(walkInterval){clearInterval(walkInterval);walkInterval=null;}
+}
+
+// ─── Room render ────────────────────────────────────────────────────────────
+const OUTFIT_NAMES={rainie:['蓝裙日常','格纹套装','白衬衫短裙','波点连衣裙'],john:['黑色正装','灰色休闲','海军西装','黑色简约']};
+const SHOP_ITEMS=[
+  // ── Outfits ──
+  {id:'outfit_r2',emoji:'👗',name:'Rainie 格纹套装',price:80,type:'outfit',who:'rainie',idx:2},
+  {id:'outfit_r3',emoji:'👕',name:'Rainie 白衬衫',price:100,type:'outfit',who:'rainie',idx:3},
+  {id:'outfit_r4',emoji:'👘',name:'Rainie 波点裙',price:150,type:'outfit',who:'rainie',idx:4},
+  {id:'outfit_j2',emoji:'🧥',name:'John 灰色休闲',price:80,type:'outfit',who:'john',idx:2},
+  {id:'outfit_j3',emoji:'🎩',name:'John 海军西装',price:120,type:'outfit',who:'john',idx:3},
+  {id:'outfit_j4',emoji:'🕴',name:'John 黑色简约',price:150,type:'outfit',who:'john',idx:4},
+  // ── Living Room ──
+  {id:'sofa',emoji:'🛋️',name:'天鹅绒沙发',price:60,type:'furniture'},
+  {id:'beanbag',emoji:'🟠',name:'懒人沙发',price:40,type:'furniture'},
+  {id:'glasstable',emoji:'🪟',name:'玻璃茶几',price:50,type:'furniture'},
+  {id:'rug',emoji:'🟥',name:'波斯地毯',price:45,type:'furniture'},
+  {id:'crttv',emoji:'📺',name:'CRT电视机',price:120,type:'furniture'},
+  {id:'recordplayer',emoji:'💿',name:'黑胶唱片机',price:150,type:'furniture'},
+  {id:'floorlamp',emoji:'🪔',name:'弧形落地灯',price:80,type:'furniture'},
+  {id:'lavalamp',emoji:'🔴',name:'熔岩灯',price:60,type:'furniture'},
+  {id:'neon',emoji:'✨',name:'NYC霓虹灯',price:100,type:'furniture'},
+  {id:'lazySofa',emoji:'🟢',name:'绿色懒沙发',price:45,type:'furniture'},
+  // ── Bedroom ──
+  {id:'bed',emoji:'🛏️',name:'水床',price:100,type:'furniture'},
+  {id:'nightstand',emoji:'🕐',name:'床头柜',price:35,type:'furniture'},
+  {id:'vanity',emoji:'💄',name:'带灯化妆台',price:90,type:'furniture'},
+  {id:'clothrack',emoji:'👔',name:'衣架',price:40,type:'furniture'},
+  // ── Kitchen ──
+  {id:'fridge',emoji:'🧊',name:'复古冰箱',price:80,type:'furniture'},
+  {id:'stove',emoji:'🍳',name:'燃气灶',price:70,type:'furniture'},
+  {id:'coffeemaker',emoji:'☕',name:'咖啡机',price:50,type:'furniture'},
+  {id:'bistrotable',emoji:'🍽️',name:'小餐桌',price:45,type:'furniture'},
+  // ── Decor ──
+  {id:'bookshelf',emoji:'📚',name:'书架',price:60,type:'furniture'},
+  {id:'rotaryphone',emoji:'📞',name:'转盘电话',price:55,type:'furniture'},
+  {id:'typewriter',emoji:'⌨️',name:'打字机',price:70,type:'furniture'},
+  {id:'globe',emoji:'🌍',name:'地球仪',price:45,type:'furniture'},
+  {id:'poster',emoji:'🖼️',name:'波普海报',price:35,type:'furniture'},
+  {id:'wallclock',emoji:'🕐',name:'挂钟',price:30,type:'furniture'},
+  {id:'photowall',emoji:'📷',name:'照片墙',price:40,type:'furniture'},
+  {id:'vinyl',emoji:'💿',name:'黑胶唱片',price:35,type:'furniture'},
+  {id:'mirror',emoji:'🪞',name:'全身镜',price:50,type:'furniture'},
+  // ── Music ──
+  {id:'guitar',emoji:'🎸',name:'吉他',price:100,type:'furniture'},
+  {id:'keyboard',emoji:'🎹',name:'电子琴',price:120,type:'furniture'},
+  {id:'arcade',emoji:'🕹️',name:'街机',price:200,type:'furniture'},
+  // ── Plants & Pets ──
+  {id:'plant',emoji:'🌿',name:'热带盆栽',price:30,type:'furniture'},
+  {id:'cat',emoji:'🐱',name:'小猫咪',price:120,type:'furniture'},
+  {id:'fishbowl',emoji:'🐠',name:'金鱼缸',price:60,type:'furniture'},
+  // ── Desk & Work ──
+  {id:'desk',emoji:'🖥️',name:'办公桌',price:80,type:'furniture'},
+  {id:'lamp',emoji:'💡',name:'台灯',price:40,type:'furniture'},
+  {id:'table',emoji:'🪑',name:'咖啡桌',price:50,type:'furniture'},
+  // ── Food (consumable) ──
+  {id:'pizza',emoji:'🍕',name:'纽约披萨',price:30,type:'food',stat:'hunger',amt:15},
+  {id:'takeout',emoji:'🥡',name:'中餐外卖',price:25,type:'food',stat:'hunger',amt:12},
+  {id:'bagel',emoji:'🥯',name:'百吉饼',price:15,type:'food',stat:'hunger',amt:8},
+  {id:'hotdog',emoji:'🌭',name:'热狗',price:12,type:'food',stat:'hunger',amt:10},
+  {id:'coffee',emoji:'☕',name:'美式咖啡',price:10,type:'food',stat:'energy',amt:10},
+  {id:'wine',emoji:'🍷',name:'红酒',price:35,type:'food',stat:'intimacy',amt:12},
+  {id:'icecream',emoji:'🍦',name:'冰淇淋',price:15,type:'food',stat:'fun',amt:8},
+  {id:'cookie',emoji:'🍪',name:'手工饼干',price:10,type:'food',stat:'hunger',amt:6},
+];
+
+function renderRoom(){
+  updatePtsBadge();
+  const lv=LEVELS[Math.min(GAME.level-1,LEVELS.length-1)];
+  const xpN=XP_PER_LEVEL[Math.min(GAME.level-1,XP_PER_LEVEL.length-1)]||3000;
+  const pct=Math.min(100,Math.round(GAME.xp/xpN*100));
+  const ltEl=document.getElementById('level-txt');if(ltEl)ltEl.textContent='Lv.'+GAME.level+' '+lv;
+  const xtEl=document.getElementById('xp-txt');if(xtEl)xtEl.textContent=GAME.xp+'/'+xpN+' XP';
+  const lbEl=document.getElementById('level-bf');if(lbEl)lbEl.style.width=pct+'%';
+  const rptEl=document.getElementById('room-pts-txt');if(rptEl)rptEl.textContent=GAME.pts;
+  const rlvEl=document.getElementById('room-lv');if(rlvEl)rlvEl.textContent=GAME.level;
+  initRoomV11();
+}
+
+function rainieAskJohn(){
+  const txt=getJohnLine(Math.random()<0.4?'encourage':'love');
+  drawBubble(0,0,txt,'john');
+  CHARS.john.bubble=txt;
+  CHARS.john.bubbleTimer=180;
+}
+
+
+// ═══════════════════════════════════════════════
+//  SHOP
+// ═══════════════════════════════════════════════
+function getItemThumb(item){
+  if(item.type==='outfit'&&item.who&&item.idx){
+    const src=SPR[item.who+'_'+item.idx];
+    if(src)return '<img src="'+src+'" style="height:50px;image-rendering:pixelated;display:block;margin:0 auto 4px">';
+  }
+  return '<span style="font-size:1.6rem;display:block;text-align:center;margin-bottom:4px">'+(item.emoji||'🎁')+'</span>';
+}
+
+let shopCategory='all';
+const SHOP_CATS={all:'全部',outfit:'👗 服装',furniture:'🏠 家具',food:'🍕 食物'};
+
+function openShop(){
+  const ov=document.getElementById('shop-overlay');
+  if(!ov)return;
+  const grid=document.getElementById('shop-grid-el');
+  if(!grid)return;
+  const spts=document.getElementById('shop-pts-num');
+  if(spts)spts.textContent=GAME.pts;
+
+  // Category tabs
+  let tabs=document.getElementById('shop-tabs');
+  if(!tabs){
+    tabs=document.createElement('div');
+    tabs.id='shop-tabs';
+    tabs.style.cssText='display:flex;gap:6px;padding:8px 16px;overflow-x:auto;flex-shrink:0';
+    grid.parentNode.insertBefore(tabs,grid);
+  }
+  tabs.innerHTML='';
+  Object.entries(SHOP_CATS).forEach(([k,v])=>{
+    const btn=document.createElement('button');
+    btn.style.cssText="background:"+(shopCategory===k?'#5A4830':'#1A1208')+";border:2px solid "+(shopCategory===k?'#E8B830':'#5A4830')+";color:"+(shopCategory===k?'#E8B830':'#A89070')+";padding:6px 12px;font-family:'VT323',monospace;font-size:.9rem;white-space:nowrap;border-radius:4px;cursor:pointer;flex-shrink:0";
+    btn.textContent=v;
+    btn.onclick=()=>{shopCategory=k;openShop();};
+    tabs.appendChild(btn);
+  });
+
+  grid.innerHTML='';
+  const filtered=shopCategory==='all'?SHOP_ITEMS:SHOP_ITEMS.filter(i=>i.type===shopCategory);
+  filtered.forEach(item=>{
+    const owned=item.type!=='food'&&GAME.ownedItems.has(item.id);
+    const canAfford=GAME.pts>=item.price;
+    const d=document.createElement('div');
+    d.className='shop-item'+(owned?' owned':(!canAfford?' cant-afford':''));
+    d.innerHTML=getItemThumb(item)+
+      '<div class="shop-iname">'+(item.name||'')+'</div>'+
+      '<div class="shop-price">'+(owned?'✓ 已拥有':'🪙 '+item.price)+'</div>';
+    if(!owned){
+      d.onclick=function(){
+        if(GAME.pts<item.price){showToast('积分不足！去刷题赚积分');return;}
+        GAME.pts-=item.price;
+        if(item.type==='food'){
+          const fi=FOOD_ITEMS[item.id];
+          const stat=item.stat||'hunger';
+          const amt=item.amt||10;
+          if(typeof CHARS!=='undefined'){
+            CHARS.john.needs[stat]=Math.min(100,(CHARS.john.needs[stat]||50)+amt);
+            CHARS.rainie.needs[stat]=Math.min(100,(CHARS.rainie.needs[stat]||50)+Math.floor(amt/2));
+            CHARS.john.state='eat';CHARS.john.stateTimer=120;
+            const line=fi?fi.line:(item.emoji+' 好吃！');
+            CHARS.john.bubble=line;CHARS.john.bubbleTimer=120;
+            drawBubble(0,0,line,'john');
+          }
+          GAME[stat]=Math.min(100,(GAME[stat]||50)+amt);
+          showToast(item.emoji+' '+item.name);
+        }else if(item.type==='outfit'){
+          GAME.ownedItems.add(item.id);
+          if(item.who==='rainie')GAME.rainieOutfit=item.idx;
+          else GAME.johnOutfit=item.idx;
+          if(typeof CHARS!=='undefined'){CHARS[item.who].outfit=item.idx;}
+          showToast('✨ 换装：'+item.name);
+        }else{
+          GAME.ownedItems.add(item.id);
+          showToast('🎉 购买：'+item.name);
+        }
+        saveGame();
+        const spts2=document.getElementById('shop-pts-num');
+        if(spts2)spts2.textContent=GAME.pts;
+        openShop();
+      };
+    }
+    grid.appendChild(d);
+  });
+  ov.style.display='flex';
+}
+
+function closeShop(){
+  const ov=document.getElementById('shop-overlay');
+  if(ov)ov.style.display='none';
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// ═══════════════════════════════════════════════
+//  FALLBACK
+// ═══════════════════════════════════════════════
+const FB=[
+  {id:1,testo:"Il segnale di STOP impone al conducente di fermarsi completamente prima di immettersi nella strada.",argomento:"Segnaletica verticale",risposta:true},
+  {id:2,testo:"In autostrada, in condizioni normali, la velocità massima per le autovetture è di 130 km/h.",argomento:"Velocità",risposta:true},
+  {id:3,testo:"Il limite di velocità nei centri abitati, salvo diversa segnalazione, è di 50 km/h.",argomento:"Velocità",risposta:true},
+  {id:4,testo:"Il tasso alcolemico massimo consentito per i conducenti in generale è di 0,5 g/l.",argomento:"Alcol e farmaci",risposta:true},
+  {id:5,testo:"Per i neopatentati nei primi tre anni il tasso alcolemico deve essere pari a zero.",argomento:"Alcol e farmaci",risposta:true},
+  {id:6,testo:"In un incrocio senza segnali, chi proviene da destra ha la precedenza.",argomento:"Precedenza",risposta:true},
+  {id:7,testo:"I veicoli su rotaia hanno sempre la precedenza sugli altri veicoli.",argomento:"Precedenza",risposta:true},
+  {id:8,testo:"La linea continua di mezzeria vieta il sorpasso.",argomento:"Segnaletica orizzontale",risposta:true},
+  {id:9,testo:"L'uso delle cinture di sicurezza è obbligatorio solo per i passeggeri anteriori.",argomento:"Sicurezza",risposta:false},
+  {id:10,testo:"Il semaforo giallo fisso indica che bisogna fermarsi se possibile.",argomento:"Segnaletica luminosa",risposta:true},
+  {id:11,testo:"È consentito usare il cellulare in mano durante la guida se ci si ferma al semaforo rosso.",argomento:"Norme di comportamento",risposta:false},
+  {id:12,testo:"Con nebbia fitta e visibilità inferiore a 50 m è obbligatorio usare i fendinebbia.",argomento:"Condizioni di guida",risposta:true},
+  {id:13,testo:"Il parcheggio sulle strisce pedonali è sempre vietato.",argomento:"Fermata e sosta",risposta:true},
+  {id:14,testo:"In autostrada con pioggia il limite di velocità scende a 110 km/h.",argomento:"Velocità",risposta:true},
+  {id:15,testo:"I bambini di altezza inferiore a 150 cm devono usare un seggiolino omologato.",argomento:"Trasporto di persone",risposta:true},
+  {id:16,testo:"Il numero europeo di emergenza unificato è il 112.",argomento:"Comportamento in caso di incidente",risposta:true},
+  {id:17,testo:"Il sorpasso è consentito in prossimità delle curve con scarsa visibilità.",argomento:"Sorpasso",risposta:false},
+  {id:18,testo:"I segnali di pericolo hanno forma triangolare con sfondo bianco e bordo rosso.",argomento:"Segnaletica verticale",risposta:true},
+  {id:19,testo:"La stanchezza alla guida è pericolosa quanto la guida in stato di ebbrezza.",argomento:"Norme di comportamento",risposta:true},
+  {id:20,testo:"In autostrada è obbligatorio indossare il giubbotto catarifrangente in caso di uscita dal veicolo.",argomento:"Norme di comportamento",risposta:true},
+];
+
+window.addEventListener('load',boot);
+</script>
+
+<script>
+const mn={name:"Patente B · 意驾题库",short_name:"意驾题库",start_url:".",display:"standalone",background_color:"#5B8C3E",theme_color:"#5B8C3E",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%235B8C3E' rx='40'/><text y='128' x='96' text-anchor='middle' font-size='100'>🚗</text></svg>",sizes:"192x192",type:"image/svg+xml"}]};
+const mb=new Blob([JSON.stringify(mn)],{type:'application/json'});
+document.head.appendChild(Object.assign(document.createElement('link'),{rel:'manifest',href:URL.createObjectURL(mb)}));
+if('serviceWorker' in navigator){const sw=`const C='pv4';self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['./']).catch(()=>{}))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>{if(e.request.url.includes('api.anthropic.com'))return;e.respondWith(caches.open(C).then(async c=>{const r=await c.match(e.request);if(r)return r;try{const nr=await fetch(e.request);if(nr.ok)c.put(e.request,nr.clone());return nr;}catch{return r||new Response('',{status:503});}}));});`;navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
+</script>
+
+</body>
+</html>
