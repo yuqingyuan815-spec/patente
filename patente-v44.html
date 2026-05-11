@@ -7999,6 +7999,36 @@ if('serviceWorker' in navigator){const sw=`const C='pv6';self.addEventListener('
   </div>
   <audio id="vinyl-audio" preload="none"></audio>
 </div>
-
+<script>
+// ─── v44 hotfix: 商店打不开问题 ───
+(function(){
+  function applyFix(){
+    if(typeof window.openShop !== 'function'){
+      // openShop 还没定义，再等一下
+      return setTimeout(applyFix, 200);
+    }
+    const _origOpenShop = window.openShop;
+    window.openShop = function(){
+      // 1. 清掉所有可能残留的 modal
+      ['penz-buy-modal','penz-inv-modal','penz-place-hud'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.remove();
+      });
+      // 2. 强制退出布置模式
+      if(typeof PENZILLA_PLACE_MODE !== 'undefined') window.PENZILLA_PLACE_MODE = false;
+      if(typeof _penzPickedItem !== 'undefined') window._penzPickedItem = null;
+      // 3. 确保 shop-overlay 可见、可点
+      const ov = document.getElementById('shop-overlay');
+      if(ov){
+        ov.style.display = 'flex';
+        ov.style.pointerEvents = 'auto';
+      }
+      return _origOpenShop.apply(this, arguments);
+    };
+    console.log('[hotfix] openShop wrapped ✓');
+  }
+  applyFix();
+})();
+</script>
 </body>
 </html>
