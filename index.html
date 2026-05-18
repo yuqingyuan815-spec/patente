@@ -7974,6 +7974,94 @@ if('serviceWorker' in navigator){const sw=`const C='pv6';self.addEventListener('
   console.log('[reset] 仓库/已放置 已清空');
 })();
 </script>
+<script>
+(function(){
+  if(window.__v51_hotfix_applied) return;
+  window.__v51_hotfix_applied = true;
+  console.log('[hotfix] applying v51 fixes…');
 
+  // #1 老库存 :brown/:green 合并到 :default
+  try {
+    if(typeof PENZILLA_INV==='object' && PENZILLA_INV){
+      let merged=0;
+      Object.keys(PENZILLA_INV).forEach(k=>{
+        if(k.endsWith(':brown') || k.endsWith(':green')){
+          const id = k.split(':')[0];
+          const dk = id+':default';
+          if(!PENZILLA_INV[dk]) PENZILLA_INV[dk] = {count:0};
+          PENZILLA_INV[dk].count += (PENZILLA_INV[k].count||0);
+          delete PENZILLA_INV[k];
+          merged++;
+        }
+      });
+      if(merged>0){
+        localStorage.setItem('penz_inv', JSON.stringify(PENZILLA_INV));
+        console.log('[hotfix] merged',merged,'legacy keys');
+      }
+    }
+    if(Array.isArray(PENZILLA_PLACED)){
+      let pDirty=false;
+      PENZILLA_PLACED.forEach(p=>{
+        if(p && (p.color==='brown' || p.color==='green')){
+          p.color = 'default';
+          pDirty = true;
+        }
+      });
+      if(pDirty) localStorage.setItem('penz_placed', JSON.stringify(PENZILLA_PLACED));
+    }
+  } catch(e){ console.warn('[hotfix] migration error:', e); }
+
+  // #2 修复 penzInvCount()
+  try {
+    window.penzInvCount = function(id){
+      if(typeof PENZILLA_INV!=='object' || !PENZILLA_INV) return 0;
+      let sum = 0;
+      Object.keys(PENZILLA_INV).forEach(k=>{
+        if(k===id || k.split(':')[0]===id){
+          sum += (PENZILLA_INV[k].count || 0);
+        }
+      });
+      return sum;
+    };
+  } catch(e){ console.warn('[hotfix] penzInvCount patch failed:', e); }
+
+  // #3 「室内设计师」徽章修复
+  try {
+    if(typeof ACHIEVEMENTS!=='undefined' && Array.isArray(ACHIEVEMENTS)){
+      const a = ACHIEVEMENTS.find(x=>x.id==='furniture10');
+      if(a){
+        a.check = function(){
+          const inv = (typeof PENZILLA_INV==='object' && PENZILLA_INV)
+            ? Object.values(PENZILLA_INV).reduce((s,e)=>s+(e&&e.count||0),0) : 0;
+          const placed = Array.isArray(PENZILLA_PLACED) ? PENZILLA_PLACED.length : 0;
+          const legacy = (typeof GAME!=='undefined' && GAME && GAME.ownedItems)
+            ? GAME.ownedItems.size : 0;
+          return (inv + placed + legacy) >= 10;
+        };
+        if(typeof checkAchievements==='function'){
+          setTimeout(checkAchievements, 800);
+        }
+      }
+    }
+  } catch(e){ console.warn('[hotfix] achievement patch failed:', e); }
+
+  // #4 离线后回到前台/重连网络时自动重试 manifest
+  try {
+    function _retryPenzInit(reason){
+      if(typeof PENZILLA_ITEMS==='undefined') return;
+      if(PENZILLA_ITEMS.length>0) return;
+      if(typeof penzInit!=='function') return;
+      console.log('[hotfix] retrying penzInit ('+reason+')');
+      penzInit();
+    }
+    document.addEventListener('visibilitychange', function(){
+      if(!document.hidden && navigator.onLine!==false) _retryPenzInit('visibility');
+    });
+    window.addEventListener('online', function(){ _retryPenzInit('online'); });
+  } catch(e){ console.warn('[hotfix] retry listeners failed:', e); }
+
+  console.log('[hotfix] v51 fixes applied ✓');
+})();
+</script>
 </body>
 </html>
