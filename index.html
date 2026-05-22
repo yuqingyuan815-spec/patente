@@ -8063,5 +8063,68 @@ if('serviceWorker' in navigator){const sw=`const C='pv6';self.addEventListener('
   console.log('[hotfix] v51 fixes applied ✓');
 })();
 </script>
+<script>
+/* 查看解析 手机端修复 */
+(function(){
+  if(window.__v51_explain_fix) return;
+  window.__v51_explain_fix = true;
+
+  // 1) 给解析库加载加 3 秒超时，别让它无限卡住
+  try{
+    var _cache;
+    var urls = (typeof EXPL_URLS!=='undefined' && EXPL_URLS && EXPL_URLS.length)
+                 ? EXPL_URLS : ['explanations.json'];
+    function _fetchTO(url, ms){
+      return new Promise(function(res, rej){
+        var ctrl = (typeof AbortController!=='undefined') ? new AbortController() : null;
+        var t = setTimeout(function(){ if(ctrl)ctrl.abort(); rej(new Error('timeout')); }, ms);
+        fetch(url, {cache:'force-cache', signal: ctrl?ctrl.signal:undefined})
+          .then(function(r){ clearTimeout(t); res(r); })
+          .catch(function(e){ clearTimeout(t); rej(e); });
+      });
+    }
+    window.loadExplDB = async function(){
+      if(_cache!==undefined) return _cache;
+      for(var i=0;i<urls.length;i++){
+        try{
+          var r = await _fetchTO(urls[i], 3000);
+          if(!r.ok) continue;
+          var j = await r.json();
+          if(j && j.hints && j.qmap){ _cache = j; return _cache; }
+        }catch(e){ console.warn('[explfix] load failed/timeout:', urls[i], e.message); }
+      }
+      _cache = null;
+      return null;
+    };
+  }catch(e){ console.warn('[explfix] loadExplDB patch failed:', e); }
+
+  // 2) 点「查看解析」立刻给反馈 + 自动滚到解析位置
+  try{
+    window.doAiExplain = function(){
+      var q = (typeof PL!=='undefined' && PL) ? PL[PI] : null;
+      if(!q) return;
+      var area = document.getElementById('ans-area');
+      if(area && !area.querySelector('.exp-card') && !document.getElementById('exp-loading')){
+        var ld = document.createElement('div');
+        ld.id = 'exp-loading';
+        ld.style.cssText = 'padding:14px;color:#999;font-size:.85rem;text-align:center';
+        ld.textContent = '📖 正在加载解析…';
+        area.appendChild(ld);
+      }
+      var sc = document.getElementById('qscroll');
+      if(sc) setTimeout(function(){ sc.scrollTop = sc.scrollHeight; }, 60);
+      Promise.resolve(doExplain(q)).catch(function(e){
+        console.warn('[explfix] doExplain error:', e);
+      }).finally(function(){
+        var ld = document.getElementById('exp-loading');
+        if(ld) ld.remove();
+        if(sc) setTimeout(function(){ sc.scrollTop = sc.scrollHeight; }, 80);
+      });
+    };
+  }catch(e){ console.warn('[explfix] doAiExplain patch failed:', e); }
+
+  console.log('[explfix] 查看解析 mobile fix applied ✓');
+})();
+</script>  
 </body>
 </html>
